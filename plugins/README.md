@@ -4,7 +4,7 @@ This directory can be used to ship various plugins inside an Ansible collection.
 
 Here is an example directory of the majority of plugins currently supported by Ansible:
 
-```
+"""
 └── plugins
     ├── action
     ├── become
@@ -24,6 +24,6 @@ Here is an example directory of the majority of plugins currently supported by A
     ├── terminal
     ├── test
     └── vars
-```
+"""
 
 A full list of plugin types can be found at [Working With Plugins](https://docs.ansible.com/ansible-core/2.13/plugins/plugins.html).
