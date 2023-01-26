@@ -94,4 +94,3 @@ def upload_files(_source_path, _source_file, _share, _dest_path):
 
     return status, msg_ret, found_files
 
-
