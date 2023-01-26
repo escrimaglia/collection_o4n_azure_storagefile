@@ -1,6 +1,7 @@
 import os
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
+from ..module_utils.select_files_from_pattern import SelectFiles
 
 
 def upload_files(self, _source_path, _source_file, _share, _dest_path):
