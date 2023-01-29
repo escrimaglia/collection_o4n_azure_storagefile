@@ -6,38 +6,53 @@ from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
 
 
+__metaclass__ = type
+
+ANSIBLE_METADATA = {'status': ['preview'],
+                    'supported_by': 'octupus',
+                    'metadata_version': '1.1'}
 
 DOCUMENTATION = """
 ---
-module: o4n_azure_create_share
-version_added: "2.0"
-author: "Ed Scrimaglia"
-short_description: Create a share in a Azure Storage File
+module: o4n_azure_manage_share
+short_description: Create or Delete a share in a Azure Storage File
 description:
     - Connecto to Azure Storage file using connection string method
     - Create a file share in a Storage File account when status param is present
+    - Delete a file share in a Storage File account when status param is absent
     - Return an ivalid operation if the share already exist
+version_added: "1.0"
+author: "Ed Scrimaglia"
 notes:
     - Testeado en linux
+requirements:
+    - ansible >= 2.10
 options:
     state:
         description:
             Create or delete a share
         required: False
+        type: str
+        choices:
+            - present
+            - absent
         default: present
-
     share:
         description:
             Name of the share to be managed
         required: True
+        type: str
     connection_string:
         description:
             String that include URL & Token to connect to Azure Storage Account. Provided by Azure
+            Storage Account -> Access Keys -> Connection String
         required: True
+        type: str
     account_name:
         description:
             Storage Account Name provided by Azure
         required: True
+        type: str
 """
 
 EXAMPLES = """
@@ -59,7 +74,7 @@ tasks:
 """
 
 # Methods
-def manage_file_share(_share, _conn_string, _account_name, _status):
+def manage_share(_share, _conn_string, _account_name, _status):
     output = {}
     try:
         # Instantiate the ShareClient from a connection string
@@ -96,7 +111,7 @@ def main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
 
-    success, msg_ret, output = manage_file_share(share,connection_string,account_name,state)
+    success, msg_ret, output = manage_share(share,connection_string,account_name,state)
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
     else:

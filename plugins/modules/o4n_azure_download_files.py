@@ -1,7 +1,7 @@
 from select_files_from_pattern import SelectFiles
 from azure.storage.fileshare import ShareClient
 
-def download_files(self, _share, _source_path, _source_file, _dest_path):
+def download_files(_account_name, _connection_string, _share, _source_path, _source_file, _dest_path):
     found_files = []
     _source_path_cast = _source_path
     # casting some vars
@@ -9,12 +9,12 @@ def download_files(self, _share, _source_path, _source_file, _dest_path):
         _source_path_cast = "."
     # check if share and path exist in Account Storage
     try:
-        status, msg_ret, output = self.list_shares_in_service()
+        status, msg_ret, output = list_shares_in_service()
         if status:
             share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
             if len(share_exist) != 1:
                 status = False
-                msg_ret = f"Invalid File Share name: <{_share}>. Does not exist in Account Storage <{self.account_name}>"
+                msg_ret = f"Invalid File Share name: <{_share}>. Does not exist in Account Storage <{account_name}>"
                 return (status, msg_ret, found_files)
     except Exception as error:
         status = False
@@ -24,7 +24,7 @@ def download_files(self, _share, _source_path, _source_file, _dest_path):
     try:
         # Instantiate the ShareFileClient from a connection string
         share = ShareClient.from_connection_string(self.connection_string, _share)
-        status, msg_ret_pattern, files_in_share = self.list_files_in_share(_share, _source_path_cast)
+        status, msg_ret_pattern, files_in_share = self.list_files_in_share(_account_name, _connection_string,_share, _source_path_cast)
         if status:
             sf = SelectFiles()
             status, msg_ret, found_files = sf.select_files(_source_file,
