@@ -98,11 +98,11 @@ def manage_share(_share, _conn_string, _account_name, _status):
 def main():
     Output = {}
     module = AnsibleModule(
-        argument_spec=dict(
-            account_name=dict(required=True, type='str'),
-            state=dict(required=False, type='str', choices=["present", "absent"], default='present'),
-            share=dict(required=False, type='str'),
-            connection_string=dict(required=True, type='str'),
+        argument_spec = dict(
+            account_name = dict(required = True, typ = 'str'),
+            state = dict(required = False, type = 'str', choices = ["present", "absent"], default = 'present'),
+            share = dict(required = False, type = 'str'),
+            connection_string = dict(required = True, type = 'str'),
         )
     )
 
@@ -115,7 +115,7 @@ def main():
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
     else:
-        module.exit_json(failed=True, msg=msg_ret, content=output)
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if  __name__ == "__main__":
     main()

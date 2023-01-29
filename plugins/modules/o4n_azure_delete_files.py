@@ -23,7 +23,7 @@ short_description: Delete files in a share Storage File
 description:
     - Connecto to Azure Storage file using connection string method
     - Delete files in share in a Storage File account
-    - Return an liste of deleted files
+    - Return a list of deleted files
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
@@ -201,7 +201,6 @@ def select_files(_file_pattern, _files_in_dir):
             return status, msg_ret, []
 
 def Main():
-    Output = {}
     module = AnsibleModule(
         argument_spec = dict(
             account_name = dict(required = True, type = 'str'),
@@ -224,7 +223,7 @@ def Main():
         if success:
             module.exit_json(failed=False, msg=msg_ret, content=output)
         else:
-            module.exit_json(failed=True, msg=msg_ret, content=output)
+            module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if __name__ == "__main__":
     Main()
