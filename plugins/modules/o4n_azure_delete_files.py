@@ -21,7 +21,7 @@ DOCUMENTATION = """
 module: o4n_azure_delete_files
 short_description: Delete files in a share Storage File
 description:
-    - Connecto to Azure Storage file using connection string method
+    - Connect to Azure Storage file using connection string method
     - Delete files in share in a Storage File account
     - Return a list of deleted files
 version_added: "1.0"
@@ -67,7 +67,6 @@ options:
             - *.*
             - file.txt
         type: str
-
 """
 
 EXAMPLES = """
@@ -220,10 +219,9 @@ def Main():
     success, msg_ret, output = delete_files(account_name, connection_string, share, path, files)
 
     if success:
-        if success:
-            module.exit_json(failed=False, msg=msg_ret, content=output)
-        else:
-            module.fail_json(failed=True, msg=msg_ret, content=output)
+        module.exit_json(failed=False, msg=msg_ret, content=output)
+    else:
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if __name__ == "__main__":
     Main()

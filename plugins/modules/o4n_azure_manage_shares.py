@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
+import azure.core.exceptions as aze
 
 
 __metaclass__ = type
@@ -17,10 +18,9 @@ DOCUMENTATION = """
 module: o4n_azure_manage_share
 short_description: Create or Delete a share in a Azure Storage File
 description:
-    - Connecto to Azure Storage file using connection string method
-    - Create a file share in a Storage File account when status param is present
-    - Delete a file share in a Storage File account when status param is absent
-    - Return an ivalid operation if the share already exist
+    - Connect to Azure Storage file using connection string method
+    - Create a file share in a Storage File account when state param is eq to present
+    - Delete a file share in a Storage File account when state param is eq to absent
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
@@ -84,13 +84,19 @@ def manage_share(_share, _conn_string, _account_name, _status):
             share.create_share()
             output = {"properties": share.get_share_properties()}
             action = "created"
-        else:
+        elif _status.lower == "absent":
             share.delete_share()
             action = "deleted"
         status = True
-        msg_ret = {"msg", f"File Share <{_share}> <{action}> in account <{_account_name}>"}
+        msg_ret = {"msg": f"File Share <{_share}> <{action}> in account <{_account_name}>"}
+    except aze.ResourceExistsError:
+        msg_ret = {"msg": f"File Share <{_share}> not created in account <{_account_name}>", "error": "<The specified resource already exist>"}
+        status = False
+    except aze.ResourceNotFoundError:
+        msg_ret = {"msg": f"File Share <{_share}> not deleted in account <{_account_name}>", "error": "<The specified resource does not exist>"}
+        status = False
     except Exception as error:
-        msg_ret = {"msg": f"File Share <{_share}> not managed in <{_account_name}>", "error": f"<{error}>"}
+        msg_ret = {"msg": f"Error managing File Share <{_share}> in <{_account_name}>", "error": f"<{error}>"}
         status = False
 
     return status, msg_ret, output

@@ -1,7 +1,65 @@
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
+
 from azure.storage.fileshare import ShareClient
 from o4n_azure_list_shares import list_shares_in_service
 import azure.core.exceptions as aze
+from ansible.module_utils.basic import AnsibleModule
 
+__metaclass__ = type
+
+ANSIBLE_METADATA = {'status': ['preview'],
+                    'supported_by': 'octupus',
+                    'metadata_version': '1.1'}
+
+DOCUMENTATION = """
+---
+module: o4n_azure_list_files
+short_description: List File Shares in Storage Account
+description:
+    - Connect to Azure Storage file using connection string method
+    - List File Shares in service
+    - Return a list of Shares in Service
+version_added: "1.0"
+author: "Ed Scrimaglia"
+notes:
+    - Testeado en linux
+requirements:
+    - ansible >= 2.10
+options:
+    connection_string:
+        description:
+            String that include URL & Token to connect to Azure Storage Account. Provided by Azure
+            Storage Account -> Access Keys -> Connection String
+        required: True
+        type: str
+    account_name:
+        description:
+            Storage Account Name provided by Azure
+        required: True
+        type: str
+    share:
+        description:
+            Name of the share to be managed
+        required: True
+        type: str
+    path:
+        description:
+            path (directory) whose files must be listed
+        required: False
+        type: str
+"""
+
+EXAMPLES = """
+tasks:
+  - name: Delete files
+      o4n_azure_list_files:
+        account_name: "{{ account_name }}"
+        connection_string: "{{ connection_string }}"
+        share: "{{ share }}"
+        path = dir1/dir2
+      register: output
+"""
 
 def list_files_in_share(_account_name, _connection_string, _share, _dir):
     output = {}
@@ -19,7 +77,7 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
                        "is_directory": file['is_directory']} for file in my_files['results'] if
                       not file['is_directory']]
         except aze.ResourceNotFoundError:
-            msg_ret = {"msg": f"List of Files not created for Directory <{_dir}> in share <{_share}>",
+            msg_ret = {"msg": f"No files to list in Directory <{_dir}> in share <{_share}>",
                        "error": "Directory not found"}
             status = False
         except Exception as error:
@@ -32,3 +90,28 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
         status = False
 
     return status, msg_ret, output
+
+def Main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            account_name = dict(required = True, type = 'str'),
+            share = dict(required = True, type = 'str'),
+            connection_string = dict(required = True, type='str'),
+            path = dict(required = False, type = 'str', default = ''),
+        )
+    )
+
+    share = module.params.get("share")
+    connection_string = module.params.get("connection_string")
+    account_name = module.params.get("account_name")
+    path = module.params.get("path")
+
+    success, msg_ret, output = list_files_in_share(account_name,connection_string,share,path)
+
+    if success:
+        module.exit_json(failed=False, msg=msg_ret, content=output)
+    else:
+        module.fail_json(failed=False, msg=msg_ret, content=output)
+
+if __name__ == "__main__":
+    Main()
