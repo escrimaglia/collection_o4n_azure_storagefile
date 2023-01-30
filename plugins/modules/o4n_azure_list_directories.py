@@ -14,12 +14,12 @@ ANSIBLE_METADATA = {'status': ['preview'],
 
 DOCUMENTATION = """
 ---
-module: o4n_azure_list_files
-short_description: List Files in a File Share
+module: o4n_azure_list_directories
+short_description: List Directories in a File Share
 description:
     - Connect to Azure Storage file using connection string method
-    - List Files in a File Share
-    - Return a list of Files in a File Share
+    - List Directories in a File Share
+    - Return a list of Directories in a File Share
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
@@ -45,7 +45,7 @@ options:
         type: str
     path:
         description:
-            path (directory) whose files must be listed
+            path (directory) whose directories must be listed. If not present, path is the root of the File Share
         required: False
         type: str
 """
@@ -53,15 +53,22 @@ options:
 EXAMPLES = """
 tasks:
   - name: Delete files
-      o4n_azure_list_files:
+      o4n_azure_list_directories:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
         share: "{{ share }}"
         path = dir1/dir2
       register: output
+
+    - name: Delete files
+      o4n_azure_list_directories:
+        account_name: "{{ account_name }}"
+        connection_string: "{{ connection_string }}"
+        share: "{{ share }}"
+      register: output
 """
 
-def list_files_in_share(_account_name, _connection_string, _share, _dir):
+def list_directories_in_share(_account_name, _connection_string, _share, _dir):
     output = {}
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
     if status:
@@ -69,24 +76,19 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
     if len(share_exist) == 1:
         share = ShareClient.from_connection_string(_connection_string, _share)
         try:
-            # List files in the directory
+            # List directories in share
             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
             status = True
-            msg_ret = {"msg": f"List of Files created for Directory <{_dir}> in share <{_share}>"}
-            output = [{"name": file['name'], "size": file['size'], "file_id": file['file_id'],
-                       "is_directory": file['is_directory']} for file in my_files['results'] if
-                      not file['is_directory']]
+            msg_ret = {"msg": f"List of Directories created for Directory <{_dir}> in share <{_share}>"}
+            output = [{"name": file['name'],"file_id": file['file_id'],"is_directory": file['is_directory']} for file in my_files['results'] if file['is_directory']]
         except aze.ResourceNotFoundError:
-            msg_ret = {"msg": f"No files to list in Directory <{_dir}> in share <{_share}>",
-                       "error": "Directory not found"}
+            msg_ret = {"msg": f"List of Directories not created for Directory <{_dir}> in share <{_share}>", "error": "Directory not found"}
             status = False
         except Exception as error:
             status = False
-            msg_ret = {"msg": f"List of Files not created for Directory <{_dir}> in share <{_share}>",
-                       "error": f"<{error}>"}
+            msg_ret = {"msg": f"List of Directories not created for Directory <{_dir}> in share <{_share}>", "error": f"<{error}>"}
     else:
-        msg_ret = {"msg": f"List of Files not created for Directory <{_dir}> in share <{_share}>",
-                   "error": "Share not found"}
+        msg_ret = {"msg": f"List of Directories not created for Directory <{_dir}> in share <{_share}>", "error": "Share not found"}
         status = False
 
     return status, msg_ret, output
@@ -106,7 +108,7 @@ def Main():
     account_name = module.params.get("account_name")
     path = module.params.get("path")
 
-    success, msg_ret, output = list_files_in_share(account_name,connection_string,share,path)
+    success, msg_ret, output = list_directories_in_share(account_name,connection_string,share,path)
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
