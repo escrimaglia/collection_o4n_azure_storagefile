@@ -118,7 +118,7 @@ def delete_files(_account_name, _connection_string, _share, _source_path, _sourc
                     # delete the file
                     file.delete_file()
                 status = True
-                msg_ret = {"msg": f"File <{found_files}> deleted from Directory <{_source_path}> in share <{_share}>"}
+                msg_ret = {"msg": f"File <{found_files}> deleted from Directory </{_source_path}> in share <{_share}>"}
             elif len(found_files) == 1:
                 path = _source_path + "/" if _source_path else ""
                 file = share.get_file_client(path + found_files[0])
@@ -126,20 +126,20 @@ def delete_files(_account_name, _connection_string, _share, _source_path, _sourc
                 file.delete_file()
                 status = True
                 msg_ret = {
-                    "msg": f"File <{found_files[0]}> deleted from Directory <{_source_path}> in share <{_share}>"}
+                    "msg": f"File <{found_files[0]}> deleted from Directory </{_source_path}> in share <{_share}>"}
             else:
                 status = False
                 msg_ret = {
-                    "msg": f"File <{found_files}> not deleted from Directory <{_source_path}> in share <{_share}>. No file to delete"}
+                    "msg": f"File <{found_files}> not deleted from Directory </{_source_path}> in share <{_share}>. No file to delete"}
         else:
             msg_ret = f"Invalid Directory: <{_source_path}> in File Share <{_share}>"
             status = False
     except aze.ResourceNotFoundError:
-        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory <{_source_path}> in share <{_share}>",
+        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_source_path}> in share <{_share}>",
                    "error": "Resource not found"}
         status = False
     except Exception as error:
-        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory <{_source_path}> in share <{_share}>",
+        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_source_path}> in share <{_share}>",
                    "error": f"<{error}>"}
         status = False
 
