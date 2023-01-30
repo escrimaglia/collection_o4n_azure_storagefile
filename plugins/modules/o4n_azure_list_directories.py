@@ -5,6 +5,7 @@ from azure.storage.fileshare import ShareClient
 from o4n_azure_list_shares import list_shares_in_service
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
+import re
 
 __metaclass__ = type
 
@@ -107,8 +108,9 @@ def Main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
     path = module.params.get("path")
+    path_sub = re.sub(r"^\/*", "", path)
 
-    success, msg_ret, output = list_directories_in_share(account_name,connection_string,share,path)
+    success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, path_sub)
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)

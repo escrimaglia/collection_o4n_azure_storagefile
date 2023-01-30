@@ -5,6 +5,7 @@ from __future__ import print_function, unicode_literals
 from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
+import re
 
 __metaclass__ = type
 
@@ -162,11 +163,13 @@ def Main():
     path = module.params.get("path")
     parent_path = module.params.get("parent_path")
     state = module.params.get("satate")
+    path_sub = re.sub(r"^\/*", "", path)
+    parent_path_sub = re.sub(r"^\/*", "", parent_path)
 
     if parent_path:
-        success, msg_ret, output = create_subdirectory(connection_string, share, path, parent_path)
+        success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
     else:
-        success, msg_ret, output = create_directory(connection_string, share, path)
+        success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)

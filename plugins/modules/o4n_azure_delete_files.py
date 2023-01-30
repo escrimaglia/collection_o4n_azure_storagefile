@@ -215,8 +215,9 @@ def Main():
     account_name = module.params.get("account_name")
     path = module.params.get("path")
     files = module.params.get("files")
+    path_sub = re.sub(r"^\/*", "", path)
 
-    success, msg_ret, output = delete_files(account_name, connection_string, share, path, files)
+    success, msg_ret, output = delete_files(account_name, connection_string, share, path_sub, files)
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
