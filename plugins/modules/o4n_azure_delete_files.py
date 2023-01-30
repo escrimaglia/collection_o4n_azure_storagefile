@@ -76,7 +76,7 @@ tasks:
         account_name: "{{ account_name }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        path = dir1/dir2
+        path = /dir1/dir2
         files = file*.txt
       register: output
 

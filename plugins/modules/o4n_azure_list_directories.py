@@ -58,7 +58,7 @@ tasks:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
         share: "{{ share }}"
-        path = dir1/dir2
+        path = /dir1/dir2
       register: output
 
     - name: Delete files

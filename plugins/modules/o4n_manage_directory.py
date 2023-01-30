@@ -68,22 +68,22 @@ tasks:
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        path: dir1
+        path: /dir1
       register: output
 
    - name: Create Sub Directory
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        path: dir2
-        parent_path: dir1
+        path: /dir2
+        parent_path: /dir1
       register: output
     
     - name: Delete Directory
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        path: dir1
+        path: /dir1
         state: absent
       register: output
 
@@ -91,8 +91,8 @@ tasks:
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        path: dir2
-        parent_path: dir1
+        path: /dir2
+        parent_path: /dir1
         state: absent
       register: output
 """

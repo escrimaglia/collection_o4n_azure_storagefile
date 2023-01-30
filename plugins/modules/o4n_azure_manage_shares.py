@@ -67,24 +67,24 @@ tasks:
    - name: Delete a share
       o4n_azure_manage_share:
         account_name: "{{ account_name }}"
-        status: absent
+        state: absent
         share: share-to-test
         connection_string: "{{ connection_string }}"
       register: output
 """
 
 # Methods
-def manage_share(_share, _conn_string, _account_name, _status):
+def manage_share(_share, _conn_string, _account_name, _state):
     output = {}
     try:
         # Instantiate the ShareClient from a connection string
         share = ShareClient.from_connection_string(_conn_string, share_name=_share)
         # Create or Delete the share
-        if _status.lower() == "present":
+        if _state.lower() == "present":
             share.create_share()
             output = {"properties": share.get_share_properties()}
             action = "created"
-        elif _status.lower == "absent":
+        elif _state.lower == "absent":
             share.delete_share()
             action = "deleted"
         status = True
