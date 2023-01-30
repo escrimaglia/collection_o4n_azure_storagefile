@@ -38,13 +38,13 @@ options:
         type: str
     connection_string:
         description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure
+            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
             Storage Account -> Access Keys -> Connection String
         required: True
         type: str
     account_name:
         description:
-            Storage Account Name provided by Azure
+            Storage Account Name Provided by Azure Portal
         required: True
         type: str
     path:

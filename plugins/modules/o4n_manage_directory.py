@@ -36,7 +36,7 @@ options:
         type: str
     connection_string:
         description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure
+            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
             Storage Account -> Access Keys -> Connection String
         required: True
         type: str
