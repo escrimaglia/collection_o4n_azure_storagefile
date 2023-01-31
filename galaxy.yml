@@ -8,7 +8,7 @@ namespace: escrimaglia
 name: o4n_azure_storagefile
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.0
+version: 1.0.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -49,7 +49,7 @@ repository: https://github.com/OctupusCloud/collection_o4n_azure_storagefile
 documentation: http://docs.example.com
 
 # The URL to the homepage of the collection/project
-homepage: http://example.com
+homepage: https://www.octupus.com/
 
 # The URL to the collection issue tracker
 issues: http://example.com/issue/tracker
