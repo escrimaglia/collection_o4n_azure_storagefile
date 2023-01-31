@@ -31,8 +31,8 @@ options:
     type: string
   connection_string:
     description:
-      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-      Storage Account -> Access Keys -> Connection String
+      - String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      - Storage Account -> Access Keys -> Connection String
     required: true
     type: string
   files:
@@ -40,19 +40,22 @@ options:
       files to deleted from File ShRE
     required: true
     choices:
-      - file*
-      - file*.txt
-      - file*.tx*
-      - file*.*
+      - 'file*'
+      - 'file*.txt'
+      - 'file*.tx*'
+      - 'file*.*'
       - file.tx*
-      - *.txt
-      - file.*
-      - *.*
-      - file.txt
+      - '*.txt'
+      - 'file.*'
+      - '*.*'
+      - 'file.txt'
     type: string
+  source_path:
+    description:
+      path, local directory where files to be uploaded are 
   dest_path:
     description:
-      path, directory, where files must be uploaded
+      path, directory where files must be uploaded
     required: false
     type: string
 """
