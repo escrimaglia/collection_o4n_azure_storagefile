@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function, unicode_literals
 from azure.storage.fileshare import ShareClient
 from o4n_azure_list_shares import list_shares_in_service
 import azure.core.exceptions as aze
