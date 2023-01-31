@@ -111,7 +111,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 
 def add_module_utils_to_syspath():
-  module_path_name =  (os.path.split(os.path.abspath(__file__)))
+  module_path_name = (os.path.split(os.path.abspath(__file__)))
   os.chdir(module_path_name[0]+"/..")
   module_utils_path = os.getcwd()
   os.chdir(module_path_name[0])
