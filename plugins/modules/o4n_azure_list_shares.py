@@ -42,10 +42,10 @@ options:
 EXAMPLES = """
 tasks:
   - name: Delete files
-      o4n_azure_list_shares:
+    o4n_azure_list_shares:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
-      register: output
+    register: output
 """
 
 def list_shares_in_service(_account_name, _connection_string):

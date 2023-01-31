@@ -58,19 +58,19 @@ options:
 EXAMPLES = """
 tasks:
   - name: Create a share
-      o4n_azure_manage_share:
+    o4n_azure_manage_share:
         account_name: "{{ account_name }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
-      register: output
+    register: output
 
    - name: Delete a share
-      o4n_azure_manage_share:
+    o4n_azure_manage_share:
         account_name: "{{ account_name }}"
         state: absent
         share: share-to-test
         connection_string: "{{ connection_string }}"
-      register: output
+    register: output
 """
 
 # Methods

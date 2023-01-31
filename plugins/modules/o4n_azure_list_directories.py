@@ -54,19 +54,19 @@ options:
 EXAMPLES = """
 tasks:
   - name: Delete files
-      o4n_azure_list_directories:
+    o4n_azure_list_directories:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
         share: "{{ share }}"
         path = /dir1/dir2
-      register: output
+    register: output
 
     - name: Delete files
-      o4n_azure_list_directories:
+    o4n_azure_list_directories:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
         share: "{{ share }}"
-      register: output
+    register: output
 """
 
 def list_directories_in_share(_account_name, _connection_string, _share, _dir):

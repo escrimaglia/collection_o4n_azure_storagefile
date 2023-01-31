@@ -64,14 +64,14 @@ options:
 
 EXAMPLES = """
 tasks:
-  - name: Create Directory
+    - name: Create Directory
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"
         path: /dir1
       register: output
 
-   - name: Create Sub Directory
+    - name: Create Sub Directory
       o4n_azure_manage_directory:
         share: share-to-test
         connection_string: "{{ connection_string }}"

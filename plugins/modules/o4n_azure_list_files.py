@@ -54,15 +54,16 @@ options:
 EXAMPLES = """
 tasks:
   - name: Delete files
-      o4n_azure_list_files:
+    o4n_azure_list_files:
         account_name: "{{ account_name }}"
         connection_string: "{{ connection_string }}"
         share: "{{ share }}"
         path = /dir1/dir2
-      register: output
+    register: output
 """
 
 def list_files_in_share(_account_name, _connection_string, _share, _dir):
+    _dir = re.sub(r"^\/*", "", _dir)
     output = {}
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
     if status:
