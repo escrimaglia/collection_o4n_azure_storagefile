@@ -3,7 +3,7 @@
 
 from __future__ import print_function, unicode_literals
 
-__metaclass__=type
+__metaclass__ = type
 
 ANSIBLE_METADATA={'status': ['preview'],
                     'supported_by': 'octupus',
@@ -31,7 +31,7 @@ options:
     type: string
   connection_string:
     description:
-      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal. 
       Storage Account -> Access Keys -> Connection String
     required: true
     type: string
@@ -125,7 +125,7 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
     _source_path=re.sub(r"^\/*", "", _source_path)
     # check if share and path exist in Account Storage
     try:
-        status, msg_ret, output=list_shares_in_service(_account_name,_connection_string)
+        status, msg_ret, output=list_shares_in_service(_account_name, _connection_string)
         if status:
             share_exist=[share['name'] for share in output['shares'] if share['name'] == _share]
             if len(share_exist) != 1:
@@ -140,7 +140,7 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
     try:
         # Instantiate the ShareFileClient from a connection string
         share=ShareClient.from_connection_string(_connection_string, _share)
-        status, msg_ret_pattern, files_in_share=list_files_in_share(_account_name, _connection_string,_share, _source_path)
+        status, msg_ret_pattern, files_in_share=list_files_in_share(_account_name, _connection_string, _share, _source_path)
         if status:
             status, msg_ret, found_files=select_files(_files,
                                                             [file['name'] for file in files_in_share if file])
@@ -181,7 +181,7 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
 def main():
     add_module_utils_to_syspath()
     module=AnsibleModule(
-        argument_spec=dict (
+        argument_spec=dict(
             account_name=dict(required=True, type='str'),
             share=dict(required=True, type='str'),
             connection_string=dict(required=True, type='str'),
