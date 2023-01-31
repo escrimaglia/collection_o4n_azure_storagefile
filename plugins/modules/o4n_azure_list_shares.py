@@ -11,40 +11,40 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_list_shares
 short_description: List File Shares in Storage Account
 description:
-    - Connecto to Azure Storage file using connection string method
-    - List File Shares in service
-    - Return a list of Shares in Service
+  - Connecto to Azure Storage file using connection string method
+  - List File Shares in service
+  - Return a list of Shares in Service
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: true
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
   - name: Delete files
     o4n_azure_list_shares:
-        account_name: "{{ account_name }}"
-        connection_string: "{{ connection_string }}"
+      account_name: "{{ account_name }}"
+      connection_string: "{{ connection_string }}"
     register: output
 """
 

@@ -24,76 +24,76 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_delete_files
 short_description: Delete files in a share Storage File
 description:
-    - Connect to Azure Storage file using connection string method
-    - Delete files in share in a Storage File account
-    - Return a list of deleted files
+  - Connect to Azure Storage file using connection string method
+  - Delete files in share in a Storage File account
+  - Return a list of deleted files
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
-    path:
-        description:
-            path (directory) where files must be deleted
-        required: False
-        type: str
-    files:
-        description:
-            files to deleted from File ShRE
-        required: True
-        choices:
-            - file*
-            - file*.txt
-            - file*.tx*
-            - file*.*
-            - file.tx*
-            - *.txt
-            - file.*
-            - *.*
-            - file.txt
-        type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+ account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: true
+    type: str
+  path:
+    description:
+      path, directory, where files must be deleted
+    required: false
+    type: str
+  files:
+    description:
+      files to deleted from File ShRE
+    required: true
+    choices:
+      - file*
+      - file*.txt
+      - file*.tx*
+      - file*.*
+      - file.tx*
+      - *.txt
+      - file.*
+      - *.*
+      - file.txt
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
   - name: Delete files
     o4n_azure_delete_files:
-        account_name: "{{ account_name }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        path = /dir1/dir2
-        files = file*.txt
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path = /dir1/dir2
+      files = file*.txt
     register: output
 
-   - name: Delete files
+  - name: Delete files
     o4n_azure_delete_files:
-        account_name: "{{ account_name }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        files = file*.*
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      files = file*.*
     register: output
 """
 

@@ -13,59 +13,59 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_list_directories
 short_description: List Directories in a File Share
 description:
-    - Connect to Azure Storage file using connection string method
-    - List Directories in a File Share
-    - Return a list of Directories in a File Share
+  - Connect to Azure Storage file using connection string method
+  - List Directories in a File Share
+  - Return a list of Directories in a File Share
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    path:
-        description:
-            path (directory) whose directories must be listed. If not present, path is the root of the File Share
-        required: False
-        type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: true
+    type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  path:
+    description:
+      path, directory, whose directories must be listed. If not present, path is the root of the File Share
+    required: false
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
   - name: Delete files
     o4n_azure_list_directories:
-        account_name: "{{ account_name }}"
-        connection_string: "{{ connection_string }}"
-        share: "{{ share }}"
-        path = /dir1/dir2
+      account_name: "{{ account_name }}"
+      connection_string: "{{ connection_string }}"
+      share: "{{ share }}"
+      path = /dir1/dir2
     register: output
 
-    - name: Delete files
+  - name: Delete files
     o4n_azure_list_directories:
-        account_name: "{{ account_name }}"
-        connection_string: "{{ connection_string }}"
-        share: "{{ share }}"
+      account_name: "{{ account_name }}"
+      connection_string: "{{ connection_string }}"
+      share: "{{ share }}"
     register: output
 """
 

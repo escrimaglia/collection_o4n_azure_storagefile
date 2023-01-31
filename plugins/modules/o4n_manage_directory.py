@@ -13,90 +13,89 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_manage_directory
 short_description: Create and Delete Directories and Sub Directory in a share Storage File
 description:
-    - Connect to Azure Storage file using connection string method
-    - Create a Directory in a share in a Storage File account when state param is eq to present
-    - Delete a Directory in a share in a Storage File account when state param is eq to absent
-    - Create a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to present
-    - Delete a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to absent
+  - Connect to Azure Storage file using connection string method
+  - Create a Directory in a share in a Storage File account when state param is eq to present
+  - Delete a Directory in a share in a Storage File account when state param is eq to absent
+  - Create a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to present
+  - Delete a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to absent
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    state:
-        description:
-            Create or delete a Directory a Sub Directory
-        required: False
-        type: str
-        choices:
-            - present
-            - absent
-        default: present
-    path:
-        description:
-            path (directory) to create or delete
-        required: True
-        type: str
-    parent_path:
-        description:
-            parent path (directory) where directory must be created or deleted
-        required: False
-        type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  state:
+    description:
+      Create or delete a Directory a Sub Directory
+    required: false
+    type: str
+    choices:
+      - present
+      - absent
+    default: present
+  path:
+    description:
+      path, directory, to create or delete
+    required: true
+    type: str
+  parent_path:
+    description:
+      parent path, directory, where directory must be created or deleted
+    required: false
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
-    - name: Create Directory
-      o4n_azure_manage_directory:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        path: /dir1
-      register: output
+  - name: Create Directory
+    o4n_azure_manage_directory:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: /dir1
+    register: output
 
-    - name: Create Sub Directory
-      o4n_azure_manage_directory:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        path: /dir2
-        parent_path: /dir1
-      register: output
+  - name: Create Sub Directory
+    o4n_azure_manage_directory:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: /dir2
+      parent_path: /dir1
+    register: output
     
-    - name: Delete Directory
-      o4n_azure_manage_directory:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        path: /dir1
-        state: absent
+  - name: Delete Directory
+    o4n_azure_manage_directory:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: /dir1
+      state: absent
       register: output
 
-    - name: Delete Sub Directory
-      o4n_azure_manage_directory:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        path: /dir2
-        parent_path: /dir1
-        state: absent
-      register: output
+  - name: Delete Sub Directory
+    o4n_azure_manage_directory:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: /dir2
+      parent_path: /dir1
+      state: absent
+    register: output
 """
-
 
 def create_directory(_connection_string, _share, _directory, _state):
     share = ShareClient.from_connection_string(_connection_string, _share)

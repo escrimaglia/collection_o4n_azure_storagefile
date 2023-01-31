@@ -13,63 +13,63 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_manage_share
 short_description: Create or Delete a share in a Azure Storage File
 description:
-    - Connect to Azure Storage file using connection string method
-    - Create a file share in a Storage File account when state param is eq to present
-    - Delete a file share in a Storage File account when state param is eq to absent
+  - Connect to Azure Storage file using connection string method
+  - Create a file share in a Storage File account when state param is eq to present
+  - Delete a file share in a Storage File account when state param is eq to absent
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    state:
-        description:
-            Create or delete a share
-        required: False
-        type: str
-        choices:
-            - present
-            - absent
-        default: present
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
+  state:
+    description:
+      Create or delete a share
+    required: false
+    type: str
+    choices:
+        - present
+        - absent
+    default: present
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: true
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
   - name: Create a share
     o4n_azure_manage_share:
-        account_name: "{{ account_name }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
     register: output
 
-   - name: Delete a share
+  - name: Delete a share
     o4n_azure_manage_share:
-        account_name: "{{ account_name }}"
-        state: absent
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
+      account_name: "{{ account_name }}"
+      state: absent
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
     register: output
 """
 

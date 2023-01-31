@@ -19,101 +19,101 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_download_files
 short_description: Download files to a local File System
 description:
-    - Connect to Azure Storage file using connection string method
-    - Download files to a Local File System
-    - Return a list of uploaded files
+  - Connect to Azure Storage file using connection string method
+  - Download files to a Local File System
+  - Return a list of uploaded files
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    source_path:
-        description:
-            path (directory) where files to be downloaded are
-        required: False
-        type: str
-    files:
-        description:
-            files to deleted from File ShRE
-        required: True
-        choices:
-            - file*
-            - file*.txt
-            - file*.tx*
-            - file*.*
-            - file.tx*
-            - *.txt
-            - file.*
-            - *.*
-            - file.txt
-        type: str
-    local_path:
-        description:
-            path (directory) where files must be downloaded
-        required: False
-        type: str
+  account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: true
+    type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  source_path:
+    description:
+      path, directory, where files to be downloaded are
+    required: false
+    type: str
+  files:
+    description:
+      files to deleted from File ShRE
+    required: true
+    choices:
+      - file*
+      - file*.txt
+      - file*.tx*
+      - file*.*
+      - file.tx*
+      - *.txt
+      - file.*
+      - *.*
+      - file.txt
+    type: str
+  local_path:
+    description:
+      path, directory, where files must be downloaded
+    required: false
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
-    - name: Download files
-      o4n_azure_download_files:
-        account_name: "{{ connection_string }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        source_path: /dir1/dir2
-        files: file*.txt
-      register: output
+  - name: Download files
+    o4n_azure_download_files:
+      account_name: "{{ connection_string }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      source_path: /dir1/dir2
+      files: file*.txt
+    register: output
 
-    - name: Download files
-      o4n_azure_download_files:
-        account_name: "{{ connection_string }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        files: file*.t*
-        local_path: /dir1/dir2
-      register: output
+  - name: Download files
+    o4n_azure_download_files:
+      account_name: "{{ connection_string }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      files: file*.t*
+      local_path: /dir1/dir2
+    register: output
 
-    - name: Download files
-      o4n_azure_download_files:
-        account_name: "{{ connection_string }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        source_path: /dir1/dir2
-        files: file*.t*
-        local_path: /files
-      register: output
+  - name: Download files
+    o4n_azure_download_files:
+      account_name: "{{ connection_string }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      source_path: /dir1/dir2
+      files: file*.t*
+      local_path: /files
+    register: output
 
-    - name: Download files
-      o4n_azure_download_files:
-        account_name: "{{ connection_string }}"
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        files: file*.t*
-      register: output
+  - name: Download files
+    o4n_azure_download_files:
+      account_name: "{{ connection_string }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      files: file*.t*
+    register: output
 """
 
 

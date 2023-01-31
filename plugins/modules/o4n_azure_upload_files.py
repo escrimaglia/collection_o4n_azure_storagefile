@@ -19,91 +19,91 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: o4n_azure_upload_files
 short_description: Upload files to a share Storage File
 description:
-    - Connect to Azure Storage file using connection string method
-    - Upload files to a share in a Storage File account
-    - Return a list of uploaded files
+  - Connect to Azure Storage file using connection string method
+  - Upload files to a share in a Storage File account
+  - Return a list of uploaded files
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    source_path:
-        description:
-            path (directory) where files to be uploaded are
-        required: False
-        type: str
-    files:
-        description:
-            files to deleted from File ShRE
-        required: True
-        choices:
-            - file*
-            - file*.txt
-            - file*.tx*
-            - file*.*
-            - file.tx*
-            - *.txt
-            - file.*
-            - *.*
-            - file.txt
-        type: str
-    dest_path:
-        description:
-            path (directory) where files must be uploaded
-        required: False
-        type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: true
+    type: str
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: true
+    type: str
+  source_path:
+    description:
+      path, directory, where files to be uploaded are
+    required: false
+    type: str
+  files:
+    description:
+      files to deleted from File ShRE
+    required: true
+    choices:
+      - file*
+      - file*.txt
+      - file*.tx*
+      - file*.*
+      - file.tx*
+      - *.txt
+      - file.*
+      - *.*
+      - file.txt
+    type: str
+  dest_path:
+    description:
+      path, directory, where files must be uploaded
+    required: false
+    type: str
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 tasks:
-    - name: Upload files
-      o4n_azure_upload_files:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        source_path: /dir1/dir2
-        files: file*.txt
+  - name: Upload files
+    o4n_azure_upload_files:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      source_path: /dir1/dir2
+      files: file*.txt
+    register: output
+
+  - name: Upload files
+    o4n_azure_upload_files:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      files: file*.t*
+      dest_path: /dir1/dir2
+    register: output
+
+  - name: Upload files
+    o4n_azure_upload_files:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      source_path: /files
+      files: file*.t*
+      dest_path: /dir1/dir2
       register: output
 
-    - name: Upload files
-      o4n_azure_upload_files:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        files: file*.t*
-        dest_path: /dir1/dir2
-      register: output
-
-    - name: Upload files
-      o4n_azure_upload_files:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        source_path: /files
-        files: file*.t*
-        dest_path: /dir1/dir2
-      register: output
-
-    - name: Upload files
-      o4n_azure_upload_files:
-        share: share-to-test
-        connection_string: "{{ connection_string }}"
-        files: file*.t*
+  - name: Upload files
+    o4n_azure_upload_files:
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      files: file*.t*
       register: output
 """
 
