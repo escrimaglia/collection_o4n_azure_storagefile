@@ -44,7 +44,6 @@ options:
     description:
       path where files to be downloaded are
     required: false
-    type: string
   files:
     description:
       files to deleted from File ShRE
