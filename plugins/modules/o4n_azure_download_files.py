@@ -40,10 +40,6 @@ options:
       Name of the share to be managed
     required: true
     type: string
-  source_path:
-    description:
-      path where files to be downloaded are
-    required: false
   files:
     description:
       files to deleted from File ShRE

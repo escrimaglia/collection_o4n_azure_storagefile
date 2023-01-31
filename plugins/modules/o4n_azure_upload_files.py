@@ -35,10 +35,6 @@ options:
       Storage Account -> Access Keys -> Connection String
     required: true
     type: string
-  source_path:
-    description:
-      path where files to be uploaded are
-    required: false
   files:
     description:
       files to deleted from File ShRE
