@@ -138,7 +138,7 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
                 msg_ret = {
                     "msg": f"File <{found_files[0]}> deleted from Directory </{_path}> in share <{_share}>"}
             else:
-                status = False
+                status = True
                 msg_ret = {
                     "msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>. No file to delete"}
         else:

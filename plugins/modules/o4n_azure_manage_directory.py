@@ -138,10 +138,10 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
         status = True
         msg_ret = {"msg": f"Sub Directory <{_directory}> <{action}> under Directory <{_parent_directory}> in share <{_share}>"}
     except aze.ResourceExistsError as error:
-        status = False
+        status = True
         msg_ret = {"msg": f"Sub Directory <{_directory}> not created. Parent Directory <{_parent_directory}>, share <{_share}>", "error": "<The specified resource already exist>"}
     except aze.ResourceNotFoundError:
-        status = False
+        status = True
         msg_ret = {"msg": f"Sub Directory <{_directory}> not deleted. Parent Directory <{_parent_directory}>, share <{_share}>", "error": "<The specified resource does not exist>"}   
     except Exception as error:
         msg_ret = {"msg": f"Error managing Sub Directory <{_directory}>. Parent Directory <{_parent_directory}>, share <{_share}>", "error": f"<{error}>"}
