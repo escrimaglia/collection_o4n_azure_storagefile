@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_delete_files
 short_description: Delete files in a share Storage File
@@ -35,7 +35,7 @@ options:
       Storage Account -> Access Keys -> Connection String
     required: true
     type: string
- account_name:
+  account_name:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
@@ -60,17 +60,17 @@ options:
       - *.*
       - file.txt
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Delete files
     o4n_azure_delete_files:
       account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
-      path = /dir1/dir2
-      files = file*.txt
+      path: /dir1/dir2
+      files: file*.txt
     register: output
 
   - name: Delete files
@@ -78,9 +78,9 @@ tasks:
       account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
-      files = file*.*
+      files: file*.*
     register: output
-'''
+"""
 
 from azure.storage.fileshare import ShareClient
 import re

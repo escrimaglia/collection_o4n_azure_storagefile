@@ -9,7 +9,7 @@ ANSIBLE_METADATA={'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION=r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_download_files
 short_description: Download files to a local File System
@@ -60,9 +60,9 @@ options:
       path, directory, where files must be downloaded
     required: false
     type: string
-'''
+"""
 
-EXAMPLES=r'''
+EXAMPLES = """
 tasks:
   - name: Download files
     o4n_azure_download_files:
@@ -99,7 +99,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       files: file*.t*
     register: output
-'''
+"""
 
 from azure.storage.fileshare import ShareClient
 import re

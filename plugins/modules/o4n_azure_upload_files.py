@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_upload_files
 short_description: Upload files to a share Storage File
@@ -55,9 +55,9 @@ options:
       path, directory, where files must be uploaded
     required: false
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Upload files
     o4n_azure_upload_files:
@@ -90,7 +90,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       files: file*.t*
       register: output
-'''
+"""
 
 import os
 from azure.storage.fileshare import ShareClient
