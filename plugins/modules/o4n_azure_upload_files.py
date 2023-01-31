@@ -6,8 +6,7 @@ import sys
 import re
 
 module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0])
-os.chdir("..")
+os.chdir(module_path_name[0]+"/..")
 module_utils_path = os.getcwd()
 os.chdir(module_path_name[0])
 sys.path.insert(1, module_utils_path)

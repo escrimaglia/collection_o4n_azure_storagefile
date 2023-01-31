@@ -2,10 +2,11 @@ from azure.storage.fileshare import ShareClient
 import re, sys, os
 from o4n_azure_list_shares import list_shares_in_service
 from o4n_azure_list_files import list_files_in_share
+from ansible.module_utils.basic import AnsibleModule
+
 
 module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0])
-os.chdir("..")
+os.chdir(module_path_name[0]+"/..")
 module_utils_path = os.getcwd()
 os.chdir(module_path_name[0])
 sys.path.insert(1, module_utils_path)
@@ -78,33 +79,37 @@ options:
 
 EXAMPLES = """
 tasks:
-    - name: Upload files
-      o4n_azure_upload_files:
+    - name: Download files
+      o4n_azure_download_files:
+        account_name: "{{ connection_string }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
         source_path: /dir1/dir2
         files: file*.txt
       register: output
 
-    - name: Upload files
-      o4n_azure_upload_files:
+    - name: Download files
+      o4n_azure_download_files:
+        account_name: "{{ connection_string }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
         files: file*.t*
-        dest_path: /dir1/dir2
+        local_path: /dir1/dir2
       register: output
 
-    - name: Upload files
-      o4n_azure_upload_files:
+    - name: Download files
+      o4n_azure_download_files:
+        account_name: "{{ connection_string }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
-        source_path: /files
+        source_path: /dir1/dir2
         files: file*.t*
-        dest_path: /dir1/dir2
+        local_path: /files
       register: output
 
-    - name: Upload files
-      o4n_azure_upload_files:
+    - name: Download files
+      o4n_azure_download_files:
+        account_name: "{{ connection_string }}"
         share: share-to-test
         connection_string: "{{ connection_string }}"
         files: file*.t*
@@ -115,10 +120,10 @@ tasks:
 def download_files(_account_name, _connection_string, _share, _source_path, _files, _local_path):
     found_files = []
     # casting some vars
-    _dest_path = re.sub(r"^\/*", "", _dest_path)
+    _source_path = re.sub(r"^\/*", "", _source_path)
     # check if share and path exist in Account Storage
     try:
-        status, msg_ret, output = list_shares_in_service()
+        status, msg_ret, output = list_shares_in_service(_account_name,_connection_string)
         if status:
             share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
             if len(share_exist) != 1:
@@ -137,19 +142,21 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
         if status:
             status, msg_ret, found_files = select_files(_files,
                                                            [file['name'] for file in files_in_share if file])
+            l_path = _local_path + "/" if _local_path else ""
+            s_path = _source_path + "/" if _source_path else ""
             if len(found_files) > 1:
                 for file_name in found_files:
-                    file = share.get_file_client(_source_path + "/" + file_name)
+                    file = share.get_file_client(s_path + file_name)
                     # Download the file
-                    with open(_local_path + "/" + file_name, "wb") as data:
+                    with open(l_path + file_name, "wb") as data:
                         stream = file.download_file()
                         data.write(stream.readall())
                 status = True
                 msg_ret = {"msg": f"File <{found_files}> downloaded to Directory <{_local_path}> from share <{_share}>"}
             elif len(found_files) == 1:
-                file = share.get_file_client(_source_path + "/" + found_files[0])
+                file = share.get_file_client(s_path + found_files[0])
                 # Download the file
-                with open(_local_path + "/" + found_files[0], "wb") as data:
+                with open(l_path + found_files[0], "wb") as data:
                     stream = file.download_file()
                     data.write(stream.readall())
                 status = True
@@ -167,3 +174,32 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
         status = False
 
     return status, msg_ret, found_files
+
+def Main():
+    module = AnsibleModule(
+        argument_spec = dict (
+            account_name = dict(required = True, type = 'str'),
+            share = dict(required = True, type = 'str'),
+            connection_string = dict(required = True, type='str'),
+            source_path = dict(required = False, type = 'str', default = ''),
+            files = dict(required = True, type = 'str'),
+            local_path = dict(required = False, type = 'str', default = '')
+        )
+    )
+
+    account_name = module.params.get("account_name")
+    share = module.params.get("share")
+    connection_string = module.params.get("connection_string")
+    source_path = module.params.get("source_path")
+    files = module.params.get("files")
+    local_path = module.params.get("dest_path")
+
+    success, msg_ret, output = download_files(account_name, connection_string, share, source_path, files, local_path)
+
+    if success:
+        module.exit_json(failed=False, msg=msg_ret, content=output)
+    else:
+        module.fail_json(failed=True, msg=msg_ret, content=output)
+
+if __name__ == "__main__":
+    Main()
