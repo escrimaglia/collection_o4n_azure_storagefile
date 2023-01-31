@@ -13,54 +13,54 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = """
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_list_files
 short_description: List Files in a File Share
 description:
-    - Connect to Azure Storage file using connection string method
-    - List Files in a File Share
-    - Return a list of Files in a File Share
+  - Connect to Azure Storage file using connection string method
+  - List Files in a File Share
+  - Return a list of Files in a File Share
 version_added: "1.0"
 author: "Ed Scrimaglia"
 notes:
-    - Testeado en linux
+  - Testeado en linux
 requirements:
-    - ansible >= 2.10
+  - ansible >= 2.10
 options:
-    connection_string:
-        description:
-            String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-            Storage Account -> Access Keys -> Connection String
-        required: True
-        type: str
-    account_name:
-        description:
-            Storage Account Name Provided by Azure Portal
-        required: True
-        type: str
-    share:
-        description:
-            Name of the share to be managed
-        required: True
-        type: str
-    path:
-        description:
-            path (directory) whose files must be listed
-        required: False
-        type: str
-"""
+  connection_string:
+    description:
+      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      Storage Account -> Access Keys -> Connection String
+    required: True
+    type: str
+  account_name:
+    description:
+      Storage Account Name Provided by Azure Portal
+    required: True
+    type: str
+  share:
+    description:
+      Name of the share to be managed
+    required: True
+    type: str
+  path:
+    description:
+      path (directory) whose files must be listed
+    required: False
+    type: str
+'''
 
-EXAMPLES = """
+EXAMPLES = r'''
 tasks:
   - name: Delete files
     o4n_azure_list_files:
-        account_name: "{{ account_name }}"
-        connection_string: "{{ connection_string }}"
-        share: "{{ share }}"
-        path = /dir1/dir2
+      account_name: "{{ account_name }}"
+      connection_string: "{{ connection_string }}"
+      share: "{{ share }}"
+      path = /dir1/dir2
     register: output
-"""
+'''
 
 def list_files_in_share(_account_name, _connection_string, _share, _dir):
     _dir = re.sub(r"^\/*", "", _dir)
