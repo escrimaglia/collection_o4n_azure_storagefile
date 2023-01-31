@@ -3,13 +3,13 @@
 
 from __future__ import print_function, unicode_literals
 
-__metaclass__ = type
+__metaclass__=type
 
-ANSIBLE_METADATA = {'status': ['preview'],
+ANSIBLE_METADATA={'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION=r'''
 ---
 module: o4n_azure_download_files
 short_description: Download files to a local File System
@@ -62,7 +62,7 @@ options:
     type: string
 '''
 
-EXAMPLES = r'''
+EXAMPLES=r'''
 tasks:
   - name: Download files
     o4n_azure_download_files:
@@ -111,99 +111,99 @@ from ansible.module_utils.basic import AnsibleModule
 
 
 def add_module_utils_to_syspath():
-  module_path_name = (os.path.split(os.path.abspath(__file__)))
-  os.chdir(module_path_name[0]+"/..")
-  module_utils_path = os.getcwd()
-  os.chdir(module_path_name[0])
-  sys.path.insert(1, module_utils_path)
+    module_path_name=(os.path.split(os.path.abspath(__file__)))
+    os.chdir(module_path_name[0]+"/..")
+    module_utils_path=os.getcwd()
+    os.chdir(module_path_name[0])
+    sys.path.insert(1, module_utils_path)
   
 
 def download_files(_account_name, _connection_string, _share, _source_path, _files, _local_path):
-  from module_utils.util_select_files_pattern import select_files
-  found_files = []
-  # casting some vars
-  _source_path = re.sub(r"^\/*", "", _source_path)
-  # check if share and path exist in Account Storage
-  try:
-      status, msg_ret, output = list_shares_in_service(_account_name,_connection_string)
-      if status:
-          share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
-          if len(share_exist) != 1:
-              status = False
-              msg_ret = f"Invalid File Share name: <{_share}>. Does not exist in Account Storage <{_account_name}>"
-              return (status, msg_ret, found_files)
-  except Exception as error:
-      status = False
-      msg_ret = f"Invalid File Share name: <{_share}>. Listing Shares process failed"
-      return (status, msg_ret, found_files)
-  # Download files
-  try:
-      # Instantiate the ShareFileClient from a connection string
-      share = ShareClient.from_connection_string(_connection_string, _share)
-      status, msg_ret_pattern, files_in_share = list_files_in_share(_account_name, _connection_string,_share, _source_path)
-      if status:
-          status, msg_ret, found_files = select_files(_files,
-                                                          [file['name'] for file in files_in_share if file])
-          l_path = _local_path + "/" if _local_path else ""
-          s_path = _source_path + "/" if _source_path else ""
-          if len(found_files) > 1:
-              for file_name in found_files:
-                  file = share.get_file_client(s_path + file_name)
-                  # Download the file
-                  with open(l_path + file_name, "wb") as data:
-                      stream = file.download_file()
-                      data.write(stream.readall())
-              status = True
-              msg_ret = {"msg": f"File <{found_files}> downloaded to Directory <{_local_path}> from share <{_share}>"}
-          elif len(found_files) == 1:
-              file = share.get_file_client(s_path + found_files[0])
-              # Download the file
-              with open(l_path + found_files[0], "wb") as data:
-                  stream = file.download_file()
-                  data.write(stream.readall())
-              status = True
-              msg_ret = {
-                  "msg": f"File <{found_files[0]}> downloaded to Directory <{_local_path}> from share <{_share}>"}
-          else:
-              status = False
-              msg_ret = {
-                  "msg": f"File <{found_files}> not downloaded to Directory <{_local_path}> from share <{_share}>. No file to download"}
-      else:
-          msg_ret = f"Invalid Directory: <{_source_path}> in File Share <{_share}>"
-          status = False
-  except Exception as error:
-      msg_ret = {"msg": f"File <{found_files}> not downloaded to Directory <{_local_path}>", "error": f"<{error}>"}
-      status = False
+    from module_utils.util_select_files_pattern import select_files
+    found_files=[]
+    # casting some vars
+    _source_path=re.sub(r"^\/*", "", _source_path)
+    # check if share and path exist in Account Storage
+    try:
+        status, msg_ret, output=list_shares_in_service(_account_name,_connection_string)
+        if status:
+            share_exist=[share['name'] for share in output['shares'] if share['name'] == _share]
+            if len(share_exist) != 1:
+                status=False
+                msg_ret=f"Invalid File Share name: <{_share}>. Does not exist in Account Storage <{_account_name}>"
+                return (status, msg_ret, found_files)
+    except Exception as error:
+        status=False
+        msg_ret=f"Invalid File Share name: <{_share}>. Listing Shares process failed"
+        return (status, msg_ret, found_files)
+    # Download files
+    try:
+        # Instantiate the ShareFileClient from a connection string
+        share=ShareClient.from_connection_string(_connection_string, _share)
+        status, msg_ret_pattern, files_in_share=list_files_in_share(_account_name, _connection_string,_share, _source_path)
+        if status:
+            status, msg_ret, found_files=select_files(_files,
+                                                            [file['name'] for file in files_in_share if file])
+            l_path=_local_path + "/" if _local_path else ""
+            s_path=_source_path + "/" if _source_path else ""
+            if len(found_files) > 1:
+                for file_name in found_files:
+                    file=share.get_file_client(s_path + file_name)
+                    # Download the file
+                    with open(l_path + file_name, "wb") as data:
+                        stream=file.download_file()
+                        data.write(stream.readall())
+                status=True
+                msg_ret={"msg": f"File <{found_files}> downloaded to Directory <{_local_path}> from share <{_share}>"}
+            elif len(found_files) == 1:
+                file=share.get_file_client(s_path + found_files[0])
+                # Download the file
+                with open(l_path + found_files[0], "wb") as data:
+                    stream=file.download_file()
+                    data.write(stream.readall())
+                status=True
+                msg_ret={
+                    "msg": f"File <{found_files[0]}> downloaded to Directory <{_local_path}> from share <{_share}>"}
+            else:
+                status=False
+                msg_ret={
+                    "msg": f"File <{found_files}> not downloaded to Directory <{_local_path}> from share <{_share}>. No file to download"}
+        else:
+            msg_ret=f"Invalid Directory: <{_source_path}> in File Share <{_share}>"
+            status=False
+    except Exception as error:
+        msg_ret={"msg": f"File <{found_files}> not downloaded to Directory <{_local_path}>", "error": f"<{error}>"}
+        status=False
 
-  return status, msg_ret, found_files
+    return status, msg_ret, found_files
 
 
 def main():
-  add_module_utils_to_syspath()
-  module = AnsibleModule(
-      argument_spec = dict (
-          account_name = dict(required = True, type = 'str'),
-          share = dict(required = True, type = 'str'),
-          connection_string = dict(required = True, type='str'),
-          source_path = dict(required = False, type = 'str', default = ''),
-          files = dict(required = True, type = 'str'),
-          local_path = dict(required = False, type = 'str', default = '')
-      )
-  )
+    add_module_utils_to_syspath()
+    module=AnsibleModule(
+        argument_spec=dict (
+            account_name=dict(required=True, type='str'),
+            share=dict(required=True, type='str'),
+            connection_string=dict(required=True, type='str'),
+            source_path=dict(required=False, type='str', default=''),
+            files=dict(required=True, type='str'),
+            local_path=dict(required=False, type='str', default='')
+        )
+    )
 
-  account_name = module.params.get("account_name")
-  share = module.params.get("share")
-  connection_string = module.params.get("connection_string")
-  source_path = module.params.get("source_path")
-  files = module.params.get("files")
-  local_path = module.params.get("dest_path")
+    account_name = module.params.get("account_name")
+    share = module.params.get("share")
+    connection_string = module.params.get("connection_string")
+    source_path = module.params.get("source_path")
+    files = module.params.get("files")
+    local_path = module.params.get("dest_path")
 
-  success, msg_ret, output = download_files(account_name, connection_string, share, source_path, files, local_path)
+    success, msg_ret, output=download_files(account_name, connection_string, share, source_path, files, local_path)
 
-  if success:
-      module.exit_json(failed=False, msg=msg_ret, content=output)
-  else:
-      module.fail_json(failed=True, msg=msg_ret, content=output)
+    if success:
+        module.exit_json(failed=False, msg=msg_ret, content=output)
+    else:
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 
 if __name__ == "__main__":

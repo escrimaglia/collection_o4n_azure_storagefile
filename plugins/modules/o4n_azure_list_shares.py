@@ -68,9 +68,9 @@ def list_shares_in_service(_account_name, _connection_string):
 
 def main():
     module = AnsibleModule(
-        argument_spec = dict(
-            account_name = dict(required = True, type = 'str'),
-            connection_string = dict(requiered = True, type = 'str')
+        argument_spec=dict(
+            account_name = dict(required=True, type='str'),
+            connection_string = dict(requiered=True, type='str')
         )
     )
 
