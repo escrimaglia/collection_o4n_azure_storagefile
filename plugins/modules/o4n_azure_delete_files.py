@@ -84,101 +84,105 @@ tasks:
 
 from azure.storage.fileshare import ShareClient
 import re
-import os, sys
+import os
+import sys
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 from o4n_azure_list_shares import list_shares_in_service
 from o4n_azure_list_files import list_files_in_share
 
-module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0]+"/..")
-module_utils_path = os.getcwd()
-os.chdir(module_path_name[0])
-sys.path.insert(1, module_utils_path)
-from module_utils.util_select_files_pattern import select_files
+
+def add_module_utils_to_syspath():
+  module_path_name =  (os.path.split(os.path.abspath(__file__)))
+  os.chdir(module_path_name[0]+"/..")
+  module_utils_path = os.getcwd()
+  os.chdir(module_path_name[0])
+  sys.path.insert(1, module_utils_path)
 
 
 def delete_files(_account_name, _connection_string, _share, _path, _files):
-    _path = re.sub(r"^\/*", "", _path)
-    found_files = []
-    # check if share and path exist in Account Storage
-    try:
-        status, msg_ret, output = list_shares_in_service(_account_name, _connection_string)
-        if status:
-            share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
-            if len(share_exist) != 1:
-                status = False
-                msg_ret = f"Invalid File Share name: <{_share}>. File does not exist in Account Storage <{_account_name}>"
-                return (status, msg_ret, found_files)
-    except Exception as error:
-        status = False
-        msg_ret = f"Invalid File Share name: <{_share}>. Listing Shares process failed"
-        return (status, msg_ret, found_files)
-    # Delete files
-    try:
-        # Instantiate the ShareFileClient from a connection string
-        share = ShareClient.from_connection_string(_connection_string, _share)
-        status, msg_ret_pattern, files_in_share = list_files_in_share(_account_name, _connection_string, _share, _path)
-        if status:
-            status, msg_ret, found_files = select_files(_files,
-                                                           [file['name'] for file in files_in_share if file])
-            path = _path + "/" if _path else ""
-            if len(found_files) > 1:
-                for file_name in found_files:
-                    file = share.get_file_client(path + file_name)
-                    # delete the file
-                    file.delete_file()
-                status = True
-                msg_ret = {"msg": f"File <{found_files}> deleted from Directory </{_path}> in share <{_share}>"}
-            elif len(found_files) == 1:
-                file = share.get_file_client(path + found_files[0])
-                # delete the file
-                file.delete_file()
-                status = True
-                msg_ret = {
-                    "msg": f"File <{found_files[0]}> deleted from Directory </{_path}> in share <{_share}>"}
-            else:
-                status = True
-                msg_ret = {
-                    "msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>. No file to delete"}
-        else:
-            msg_ret = f"Invalid Directory: <{_path}> in File Share <{_share}>"
-            status = False
-    except aze.ResourceNotFoundError:
-        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>",
-                   "error": "Resource not found"}
-        status = False
-    except Exception as error:
-        msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>",
-                   "error": f"<{error}>"}
-        status = False
+  from module_utils.util_select_files_pattern import select_files
+  _path = re.sub(r"^\/*", "", _path)
+  found_files = []
+  # check if share and path exist in Account Storage
+  try:
+      status, msg_ret, output = list_shares_in_service(_account_name, _connection_string)
+      if status:
+          share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
+          if len(share_exist) != 1:
+              status = False
+              msg_ret = f"Invalid File Share name: <{_share}>. File does not exist in Account Storage <{_account_name}>"
+              return (status, msg_ret, found_files)
+  except Exception as error:
+      status = False
+      msg_ret = f"Invalid File Share name: <{_share}>. Listing Shares process failed"
+      return (status, msg_ret, found_files)
+  # Delete files
+  try:
+      # Instantiate the ShareFileClient from a connection string
+      share = ShareClient.from_connection_string(_connection_string, _share)
+      status, msg_ret_pattern, files_in_share = list_files_in_share(_account_name, _connection_string, _share, _path)
+      if status:
+          status, msg_ret, found_files = select_files(_files,
+                                                          [file['name'] for file in files_in_share if file])
+          path = _path + "/" if _path else ""
+          if len(found_files) > 1:
+              for file_name in found_files:
+                  file = share.get_file_client(path + file_name)
+                  # delete the file
+                  file.delete_file()
+              status = True
+              msg_ret = {"msg": f"File <{found_files}> deleted from Directory </{_path}> in share <{_share}>"}
+          elif len(found_files) == 1:
+              file = share.get_file_client(path + found_files[0])
+              # delete the file
+              file.delete_file()
+              status = True
+              msg_ret = {
+                  "msg": f"File <{found_files[0]}> deleted from Directory </{_path}> in share <{_share}>"}
+          else:
+              status = True
+              msg_ret = {
+                  "msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>. No file to delete"}
+      else:
+          msg_ret = f"Invalid Directory: <{_path}> in File Share <{_share}>"
+          status = False
+  except aze.ResourceNotFoundError:
+      msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>",
+                  "error": "Resource not found"}
+      status = False
+  except Exception as error:
+      msg_ret = {"msg": f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>",
+                  "error": f"<{error}>"}
+      status = False
 
-    return status, msg_ret, found_files
+  return status, msg_ret, found_files
 
 
 def main():
-    module = AnsibleModule(
-        argument_spec = dict(
-            account_name = dict(required = True, type = 'str'),
-            share = dict(required = True, type = 'str'),
-            connection_string = dict(required = True, type='str'),
-            path = dict(required = False, type = 'str', default = ''),
-            files = dict(required = True, type = 'str')
-        )
-    )
+  add_module_utils_to_syspath()
+  module = AnsibleModule(
+      argument_spec = dict(
+          account_name = dict(required = True, type = 'str'),
+          share = dict(required = True, type = 'str'),
+          connection_string = dict(required = True, type='str'),
+          path = dict(required = False, type = 'str', default = ''),
+          files = dict(required = True, type = 'str')
+      )
+  )
 
-    share = module.params.get("share")
-    connection_string = module.params.get("connection_string")
-    account_name = module.params.get("account_name")
-    path = module.params.get("path")
-    files = module.params.get("files")
+  share = module.params.get("share")
+  connection_string = module.params.get("connection_string")
+  account_name = module.params.get("account_name")
+  path = module.params.get("path")
+  files = module.params.get("files")
 
-    success, msg_ret, output = delete_files(account_name, connection_string, share, path, files)
+  success, msg_ret, output = delete_files(account_name, connection_string, share, path, files)
 
-    if success:
-        module.exit_json(failed=False, msg=msg_ret, content=output)
-    else:
-        module.fail_json(failed=True, msg=msg_ret, content=output)
+  if success:
+      module.exit_json(failed=False, msg=msg_ret, content=output)
+  else:
+      module.fail_json(failed=True, msg=msg_ret, content=output)
 
 
 if __name__ == "__main__":

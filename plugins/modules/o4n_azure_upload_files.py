@@ -98,71 +98,74 @@ from ansible.module_utils.basic import AnsibleModule
 import sys
 import re
 
-module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0]+"/..")
-module_utils_path = os.getcwd()
-os.chdir(module_path_name[0])
-sys.path.insert(1, module_utils_path)
 
-from module_utils.util_select_files_pattern import select_files
+def add_module_utils_to_syspath():
+  module_path_name =  (os.path.split(os.path.abspath(__file__)))
+  os.chdir(module_path_name[0]+"/..")
+  module_utils_path = os.getcwd()
+  os.chdir(module_path_name[0])
+  sys.path.insert(1, module_utils_path)
+
 
 def upload_files(_share, _connection_string, _source_path, _source_file, _dest_path):
-    found_files = []
-    # casting some vars
-    _dest_path = re.sub(r"^\/*", "", _dest_path)
-    try:
-        # get files form local file system
-        base_dir = os.getcwd() + "/" + _source_path + "/"
-        search_dir = os.path.dirname(base_dir)
-        files_in_dir = os.listdir(search_dir)
-        # Instantiate the ShareClient from a connection string
-        share = ShareClient.from_connection_string(_connection_string, _share)
-        # search files to upload
-        status, msg_ret, found_files = select_files(_source_file, files_in_dir)
-        source_path = _source_path + "/" if _source_path else ""
-        dest_path = _dest_path + "/" if _source_path else ""
-        if len(found_files) > 0:
-            for file_name in found_files:
-                file = share.get_file_client(dest_path + file_name)
-                # Upload files
-                with open(source_path + file_name, "rb") as source_file:
-                    file.upload_file(file_name)
-            status = True
-            msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
-        else:
-            status = False
-            msg_ret = {
-                "msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"}
-    except Exception as error:
-        msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>",
-                   "error": f"<{error}>"}
-        status = False
+  from module_utils.util_select_files_pattern import select_files
+  found_files = []
+  # casting some vars
+  _dest_path = re.sub(r"^\/*", "", _dest_path)
+  try:
+      # get files form local file system
+      base_dir = os.getcwd() + "/" + _source_path + "/"
+      search_dir = os.path.dirname(base_dir)
+      files_in_dir = os.listdir(search_dir)
+      # Instantiate the ShareClient from a connection string
+      share = ShareClient.from_connection_string(_connection_string, _share)
+      # search files to upload
+      status, msg_ret, found_files = select_files(_source_file, files_in_dir)
+      source_path = _source_path + "/" if _source_path else ""
+      dest_path = _dest_path + "/" if _source_path else ""
+      if len(found_files) > 0:
+          for file_name in found_files:
+              file = share.get_file_client(dest_path + file_name)
+              # Upload files
+              with open(source_path + file_name, "rb") as source_file:
+                  file.upload_file(file_name)
+          status = True
+          msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
+      else:
+          status = False
+          msg_ret = {
+              "msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"}
+  except Exception as error:
+      msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>",
+                  "error": f"<{error}>"}
+      status = False
 
-    return status, msg_ret, found_files
+  return status, msg_ret, found_files
 
 def main():
-    module = AnsibleModule(
-        argument_spec = dict(
-            share = dict(required = True, type = 'str'),
-            connection_string = dict(required = True, type='str'),
-            source_path = dict(required = False, type = 'str', default = ''),
-            files = dict(required = True, type = 'str'),
-            dest_path = dict(required = False, type = 'str', default = '')
-        )
-    )
+  add_module_utils_to_syspath()
+  module = AnsibleModule(
+      argument_spec = dict(
+          share = dict(required = True, type = 'str'),
+          connection_string = dict(required = True, type='str'),
+          source_path = dict(required = False, type = 'str', default = ''),
+          files = dict(required = True, type = 'str'),
+          dest_path = dict(required = False, type = 'str', default = '')
+      )
+  )
 
-    share = module.params.get("share")
-    connection_string = module.params.get("connection_string")
-    source_path = module.params.get("source_path")
-    files = module.params.get("files")
-    dest_path = module.params.get("dest_path")
+  share = module.params.get("share")
+  connection_string = module.params.get("connection_string")
+  source_path = module.params.get("source_path")
+  files = module.params.get("files")
+  dest_path = module.params.get("dest_path")
 
-    success, msg_ret, output = upload_files(share, connection_string, source_path, files, dest_path)
+  success, msg_ret, output = upload_files(share, connection_string, source_path, files, dest_path)
 
-    if success:
-        module.exit_json(failed=False, msg=msg_ret, content=output)
-    else:
-        module.fail_json(failed=True, msg=msg_ret, content=output)
+  if success:
+      module.exit_json(failed=False, msg=msg_ret, content=output)
+  else:
+      module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if __name__ == "__main__":
     main() 
