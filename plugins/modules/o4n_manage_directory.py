@@ -13,7 +13,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_manage_directory
 short_description: Create and Delete Directories and Sub Directory in a share Storage File
@@ -34,18 +34,18 @@ options:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   connection_string:
     description:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   state:
     description:
       Create or delete a Directory a Sub Directory
     required: false
-    type: str
+    type: string
     choices:
       - present
       - absent
@@ -54,15 +54,15 @@ options:
     description:
       path, directory, to create or delete
     required: true
-    type: str
+    type: string
   parent_path:
     description:
       parent path, directory, where directory must be created or deleted
     required: false
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Create Directory
     o4n_azure_manage_directory:
@@ -95,7 +95,7 @@ tasks:
       parent_path: /dir1
       state: absent
     register: output
-"""
+'''
 
 def create_directory(_connection_string, _share, _directory, _state):
     share = ShareClient.from_connection_string(_connection_string, _share)

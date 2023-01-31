@@ -19,7 +19,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_download_files
 short_description: Download files to a local File System
@@ -44,17 +44,17 @@ options:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   share:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   source_path:
     description:
       path, directory, where files to be downloaded are
     required: false
-    type: str
+    type: string
   files:
     description:
       files to deleted from File ShRE
@@ -74,10 +74,10 @@ options:
     description:
       path, directory, where files must be downloaded
     required: false
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Download files
     o4n_azure_download_files:
@@ -114,7 +114,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       files: file*.t*
     register: output
-"""
+'''
 
 
 def download_files(_account_name, _connection_string, _share, _source_path, _files, _local_path):

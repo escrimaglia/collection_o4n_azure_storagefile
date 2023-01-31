@@ -33,22 +33,22 @@ options:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   account_name:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
-    type: str
+    type: string
   share:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   path:
     description:
       path, directory, whose files must be listed
     required: false
-    type: str
+    type: string
 '''
 
 EXAMPLES = r'''

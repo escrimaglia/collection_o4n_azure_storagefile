@@ -19,7 +19,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_upload_files
 short_description: Upload files to a share Storage File
@@ -38,18 +38,18 @@ options:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   connection_string:
     description:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   source_path:
     description:
       path, directory, where files to be uploaded are
     required: false
-    type: str
+    type: string
   files:
     description:
       files to deleted from File ShRE
@@ -64,15 +64,15 @@ options:
       - file.*
       - *.*
       - file.txt
-    type: str
+    type: string
   dest_path:
     description:
       path, directory, where files must be uploaded
     required: false
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Upload files
     o4n_azure_upload_files:
@@ -105,7 +105,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       files: file*.t*
       register: output
-"""
+'''
 
 def upload_files(_share, _connection_string, _source_path, _source_file, _dest_path):
     found_files = []

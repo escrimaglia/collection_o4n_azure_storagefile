@@ -11,7 +11,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_list_shares
 short_description: List File Shares in Storage Account
@@ -31,22 +31,22 @@ options:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   account_name:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Delete files
     o4n_azure_list_shares:
       account_name: "{{ account_name }}"
       connection_string: "{{ connection_string }}"
     register: output
-"""
+'''
 
 def list_shares_in_service(_account_name, _connection_string):
     output = {}

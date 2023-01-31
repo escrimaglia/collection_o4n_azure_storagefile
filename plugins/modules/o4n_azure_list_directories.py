@@ -13,7 +13,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_list_directories
 short_description: List Directories in a File Share
@@ -33,25 +33,25 @@ options:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   account_name:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
-    type: str
+    type: string
   share:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   path:
     description:
       path, directory, whose directories must be listed. If not present, path is the root of the File Share
     required: false
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Delete files
     o4n_azure_list_directories:
@@ -67,7 +67,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       share: "{{ share }}"
     register: output
-"""
+'''
 
 def list_directories_in_share(_account_name, _connection_string, _share, _dir):
     output = {}

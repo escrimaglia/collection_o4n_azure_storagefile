@@ -13,7 +13,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: o4n_azure_manage_share
 short_description: Create or Delete a share in a Azure Storage File
@@ -32,7 +32,7 @@ options:
     description:
       Create or delete a share
     required: false
-    type: str
+    type: string
     choices:
         - present
         - absent
@@ -41,21 +41,21 @@ options:
     description:
       Name of the share to be managed
     required: true
-    type: str
+    type: string
   connection_string:
     description:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
       Storage Account -> Access Keys -> Connection String
     required: true
-    type: str
+    type: string
   account_name:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
-    type: str
-"""
+    type: string
+'''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
 tasks:
   - name: Create a share
     o4n_azure_manage_share:
@@ -71,7 +71,7 @@ tasks:
       share: share-to-test
       connection_string: "{{ connection_string }}"
     register: output
-"""
+'''
 
 # Methods
 def manage_share(_share, _conn_string, _account_name, _state):
