@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from azure.storage.fileshare import ShareClient
-from ansible.module_utils.basic import AnsibleModule
-import azure.core.exceptions as aze
-
 
 __metaclass__ = type
 
@@ -73,7 +69,11 @@ tasks:
     register: output
 '''
 
-# Methods
+from azure.storage.fileshare import ShareClient
+from ansible.module_utils.basic import AnsibleModule
+import azure.core.exceptions as aze
+
+
 def manage_share(_share, _conn_string, _account_name, _state):
     output = {}
     try:
@@ -101,6 +101,7 @@ def manage_share(_share, _conn_string, _account_name, _state):
 
     return status, msg_ret, output
 
+
 def main():
     Output = {}
     module = AnsibleModule(
@@ -122,6 +123,7 @@ def main():
         module.exit_json(failed=False, msg=msg_ret, content=output)
     else:
         module.fail_json(failed=True, msg=msg_ret, content=output)
+
 
 if  __name__ == "__main__":
     main()

@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from azure.storage.fileshare import ShareClient
-import azure.core.exceptions as aze
-from ansible.module_utils.basic import AnsibleModule
-import re
 
 __metaclass__ = type
 
@@ -19,7 +15,7 @@ module: o4n_azure_manage_directory
 short_description: Create and Delete Directories and Sub Directory in a share Storage File
 description:
   - Connect to Azure Storage file using connection string method
-  - Create a Directory in a share in a Storage File account when state param is eq to present
+  - Create a Directory in a share in a Storage File account when state param is eq to present 
   - Delete a Directory in a share in a Storage File account when state param is eq to absent
   - Create a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to present
   - Delete a Sub Directory under a parent Directory in a share in a Storage File account when state param is eq to absent
@@ -97,6 +93,12 @@ tasks:
     register: output
 '''
 
+from azure.storage.fileshare import ShareClient
+import azure.core.exceptions as aze
+from ansible.module_utils.basic import AnsibleModule
+import re
+
+
 def create_directory(_connection_string, _share, _directory, _state):
     share = ShareClient.from_connection_string(_connection_string, _share)
     try:
@@ -122,6 +124,7 @@ def create_directory(_connection_string, _share, _directory, _state):
 
     return status, msg_ret, _directory
 
+
 def create_subdirectory(_connection_string, _share, _directory, _parent_directory, _state):
     share = ShareClient.from_connection_string(_connection_string, _share)
     try:
@@ -146,7 +149,8 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
 
     return status, msg_ret, _parent_directory + ":"+ _directory
 
-def Main():
+
+def main():
     module = AnsibleModule(
         argument_spec=dict(
             share = dict(required = True, type = 'str'),
@@ -175,5 +179,6 @@ def Main():
     else:
         module.fail_json(failed=True, msg=msg_ret, content=output)
 
+
 if __name__ == "__main__":
-    Main()
+    main()

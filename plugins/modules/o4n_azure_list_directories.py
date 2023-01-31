@@ -2,11 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from azure.storage.fileshare import ShareClient
-from o4n_azure_list_shares import list_shares_in_service
-import azure.core.exceptions as aze
-from ansible.module_utils.basic import AnsibleModule
-import re
 
 __metaclass__ = type
 
@@ -70,6 +65,13 @@ tasks:
     register: output
 '''
 
+from azure.storage.fileshare import ShareClient
+from o4n_azure_list_shares import list_shares_in_service
+import azure.core.exceptions as aze
+from ansible.module_utils.basic import AnsibleModule
+import re
+
+
 def list_directories_in_share(_account_name, _connection_string, _share, _dir):
     output = {}
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
@@ -95,7 +97,8 @@ def list_directories_in_share(_account_name, _connection_string, _share, _dir):
 
     return status, msg_ret, output
 
-def Main():
+
+def main():
     module = AnsibleModule(
         argument_spec = dict(
             account_name = dict(required = True, type = 'str'),
@@ -118,5 +121,6 @@ def Main():
     else:
         module.fail_json(failed=False, msg=msg_ret, content=output)
 
+
 if __name__ == "__main__":
-    Main()
+    main()

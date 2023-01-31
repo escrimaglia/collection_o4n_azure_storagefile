@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from azure.storage.fileshare import ShareServiceClient
-from ansible.module_utils.basic import AnsibleModule
 
 __metaclass__ = type
 
@@ -48,6 +46,10 @@ tasks:
     register: output
 '''
 
+from azure.storage.fileshare import ShareServiceClient
+from ansible.module_utils.basic import AnsibleModule
+
+
 def list_shares_in_service(_account_name, _connection_string):
     output = {}
     try:
@@ -63,7 +65,8 @@ def list_shares_in_service(_account_name, _connection_string):
 
     return status, msg_ret, output
 
-def Main():
+
+def main():
     module = AnsibleModule(
         argument_spec = dict(
             account_name = dict(required = True, type = 'str'),
@@ -81,3 +84,6 @@ def Main():
     else:
         module.fail_json(failed=True, msg=msg_ret, content=output)
 
+
+if __name__ == "__main__":
+    main()

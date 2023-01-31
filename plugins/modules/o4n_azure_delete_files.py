@@ -2,21 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from azure.storage.fileshare import ShareClient
-import re
-import os, sys
-import azure.core.exceptions as aze
-from ansible.module_utils.basic import AnsibleModule
-from o4n_azure_list_shares import list_shares_in_service
-from o4n_azure_list_files import list_files_in_share
-
-module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0]+"/..")
-module_utils_path = os.getcwd()
-os.chdir(module_path_name[0])
-sys.path.insert(1, module_utils_path)
-
-from module_utils.util_select_files_pattern import select_files
 
 __metaclass__ = type
 
@@ -97,6 +82,22 @@ tasks:
     register: output
 '''
 
+from azure.storage.fileshare import ShareClient
+import re
+import os, sys
+import azure.core.exceptions as aze
+from ansible.module_utils.basic import AnsibleModule
+from o4n_azure_list_shares import list_shares_in_service
+from o4n_azure_list_files import list_files_in_share
+
+module_path_name =  (os.path.split(os.path.abspath(__file__)))
+os.chdir(module_path_name[0]+"/..")
+module_utils_path = os.getcwd()
+os.chdir(module_path_name[0])
+sys.path.insert(1, module_utils_path)
+from module_utils.util_select_files_pattern import select_files
+
+
 def delete_files(_account_name, _connection_string, _share, _path, _files):
     _path = re.sub(r"^\/*", "", _path)
     found_files = []
@@ -155,7 +156,7 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
     return status, msg_ret, found_files
 
 
-def Main():
+def main():
     module = AnsibleModule(
         argument_spec = dict(
             account_name = dict(required = True, type = 'str'),
@@ -179,5 +180,6 @@ def Main():
     else:
         module.fail_json(failed=True, msg=msg_ret, content=output)
 
+
 if __name__ == "__main__":
-    Main()
+    main()

@@ -1,17 +1,7 @@
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
+
 from __future__ import (absolute_import, division, print_function)
-import os
-from azure.storage.fileshare import ShareClient
-from ansible.module_utils.basic import AnsibleModule
-import sys
-import re
-
-module_path_name =  (os.path.split(os.path.abspath(__file__)))
-os.chdir(module_path_name[0]+"/..")
-module_utils_path = os.getcwd()
-os.chdir(module_path_name[0])
-sys.path.insert(1, module_utils_path)
-
-from module_utils.util_select_files_pattern import select_files
 
 __metaclass__ = type
 
@@ -107,6 +97,20 @@ tasks:
       register: output
 '''
 
+import os
+from azure.storage.fileshare import ShareClient
+from ansible.module_utils.basic import AnsibleModule
+import sys
+import re
+
+module_path_name =  (os.path.split(os.path.abspath(__file__)))
+os.chdir(module_path_name[0]+"/..")
+module_utils_path = os.getcwd()
+os.chdir(module_path_name[0])
+sys.path.insert(1, module_utils_path)
+
+from module_utils.util_select_files_pattern import select_files
+
 def upload_files(_share, _connection_string, _source_path, _source_file, _dest_path):
     found_files = []
     # casting some vars
@@ -141,7 +145,7 @@ def upload_files(_share, _connection_string, _source_path, _source_file, _dest_p
 
     return status, msg_ret, found_files
 
-def Main():
+def main():
     module = AnsibleModule(
         argument_spec = dict(
             share = dict(required = True, type = 'str'),
@@ -166,6 +170,6 @@ def Main():
         module.fail_json(failed=True, msg=msg_ret, content=output)
 
 if __name__ == "__main__":
-    Main() 
+    main() 
 
     
