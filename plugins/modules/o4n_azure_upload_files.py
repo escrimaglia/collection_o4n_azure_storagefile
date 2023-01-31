@@ -110,7 +110,7 @@ tasks:
 
 def upload_files(_share, _connection_string, _source_path, _source_file, _dest_path):
     found_files = []
-    # casting some text
+    # casting some vars
     _dest_path = re.sub(r"^\/*", "", _dest_path)
     try:
         # get files form local file system
