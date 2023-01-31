@@ -37,7 +37,7 @@ options:
     type: string
   source_path:
     description:
-      path, directory, where files to be uploaded are
+      path where files to be uploaded are
     required: false
     type: string
   files:

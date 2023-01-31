@@ -28,7 +28,7 @@ options:
     description:
       Storage Account Name Provided by Azure Portal
     required: true
-    type: str
+    type: string
   connection_string:
     description:
       String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
@@ -42,7 +42,7 @@ options:
     type: string
   source_path:
     description:
-      path, directory, where files to be downloaded are
+      path where files to be downloaded are
     required: false
     type: string
   files:
