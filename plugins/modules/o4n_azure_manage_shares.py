@@ -73,10 +73,13 @@ from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
 import azure.core.exceptions as aze
 
+def create_client_with_connection_string(_conn_string):
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(_conn_string)
 
 def manage_share(_share, _conn_string, _account_name, _state):
     output = {}
-    action = ""
     output = {"share": _share}
     try:
         # Instantiate the ShareClient from a connection string
@@ -120,6 +123,7 @@ def main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
 
+    create_client_with_connection_string(connection_string)
     success, msg_ret, output = manage_share(share,connection_string,account_name,state)
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
