@@ -104,12 +104,12 @@ def manage_share(_share, _conn_string, _account_name, _state):
 
 def main():
     Output = {}
-    module = AnsibleModule(
-        argument_spec = dict(
-            account_name = dict(required = True, typ = 'str'),
-            state = dict(required = False, type = 'str', choices = ["present", "absent"], default = 'present'),
-            share = dict(required = False, type = 'str'),
-            connection_string = dict(required = True, type = 'str'),
+    module=AnsibleModule(
+        argument_spec=dict(
+            account_name=dict(required=True, type='str'),
+            state=dict(required=False, type='str', choices=["present", "absent"], default='present'),
+            share=dict(required=False, type='str'),
+            connection_string=dict(required= True, type='str'),
         )
     )
 
