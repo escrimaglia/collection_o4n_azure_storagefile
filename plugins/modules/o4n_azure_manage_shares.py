@@ -77,16 +77,15 @@ import azure.core.exceptions as aze
 def manage_share(_share, _conn_string, _account_name, _state):
     output = {}
     action = ""
+    output = {"share": _share}
     try:
         # Instantiate the ShareClient from a connection string
         share = ShareClient.from_connection_string(_conn_string, share_name=_share)
         # Create or Delete the share
         if _state.lower() == "present":
             share.create_share()
-            output = {"properties": share.get_share_properties()}
             action = "created"
         elif _state.lower() == "absent":
-            output = {"properties": "share to delete"}
             share.delete_share()
             action = "deleted"
         else:
@@ -123,9 +122,9 @@ def main():
 
     success, msg_ret, output = manage_share(share,connection_string,account_name,state)
     if success:
-        module.exit_json(msg=msg_ret, content=output)
+        module.exit_json(failed=False, msg=msg_ret, content=output)
     else:
-        module.fail_json(msg=msg_ret, content=output)
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 
 if  __name__ == "__main__":

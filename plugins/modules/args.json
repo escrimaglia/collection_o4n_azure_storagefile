@@ -1,6 +1,6 @@
 {
     "ANSIBLE_MODULE_ARGS": {
-        "share": "share-to-test1",
+        "share": "share-to-test2",
         "connection_string": "DefaultEndpointsProtocol=https;AccountName=octionstorage;AccountKey=/wpBAhXAcl14ImtgjH3B+s4H2cBlCumkRk3IQCAnADvoM+tDFt2sCPxCQLyVXWg35ZdFUd+SDeW5+AStSZGCeQ==;EndpointSuffix=core.windows.net",
         "account_name": "octionstorage",
         "state": "present"
