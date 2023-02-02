@@ -64,6 +64,7 @@ EXAMPLES = """
 tasks:
   - name: Upload files
     o4n_azure_upload_files:
+      account_name: "{{ connection_string }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       source_path: /dir1/dir2
@@ -72,6 +73,7 @@ tasks:
 
   - name: Upload files
     o4n_azure_upload_files:
+      account_name: "{{ connection_string }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       files: file*.t*
@@ -80,6 +82,7 @@ tasks:
 
   - name: Upload files
     o4n_azure_upload_files:
+      account_name: "{{ connection_string }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       source_path: /files
@@ -89,6 +92,7 @@ tasks:
 
   - name: Upload files
     o4n_azure_upload_files:
+      account_name: "{{ connection_string }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       files: file*.t*
