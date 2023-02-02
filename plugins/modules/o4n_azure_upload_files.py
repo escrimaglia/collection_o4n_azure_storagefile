@@ -98,10 +98,11 @@ tasks:
 import os
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
+from azure.storage.fileshare import ShareServiceClient
 import re
 
 
-def upload_files(_share, _connection_string, _source_path, _source_file, _dest_path):
+def upload_files(_account_name, _share, _connection_string, _source_path, _source_file, _dest_path):
   found_files = []
   # casting some vars
   _dest_path = re.sub(r"^\/*", "", _dest_path)
@@ -111,29 +112,53 @@ def upload_files(_share, _connection_string, _source_path, _source_file, _dest_p
       search_dir = os.path.dirname(base_dir)
       files_in_dir = os.listdir(search_dir)
       # Instantiate the ShareClient from a connection string
-      share = ShareClient.from_connection_string(_connection_string, _share)
-      # search files to upload
-      status, msg_ret, found_files = select_files(_source_file, files_in_dir)
-      source_path = _source_path + "/" if _source_path else ""
-      dest_path = _dest_path + "/" if _source_path else ""
-      if len(found_files) > 0:
-          for file_name in found_files:
-              file = share.get_file_client(dest_path + file_name)
-              # Upload files
-              with open(source_path + file_name, "rb") as source_file:
-                  file.upload_file(file_name)
-          status = True
-          msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
+      status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
+      if status:
+        share_exist = [share_name for share_name in shares_in_service if share_name == _share]
+      if len(share_exist) == 1:
+        share = ShareClient.from_connection_string(_connection_string, _share)
+        # search files to upload
+        status, msg_ret, found_files = select_files(_source_file, files_in_dir)
+        source_path = _source_path + "/" if _source_path else ""
+        dest_path = _dest_path + "/" if _source_path else ""
+        if len(found_files) > 0:
+            for file_name in found_files:
+                file = share.get_file_client(dest_path + file_name)
+                # Upload files
+                with open(source_path + file_name, "rb") as source_file:
+                    file.upload_file(file_name)
+            status = True
+            msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
+        else:
+            status = False
+            msg_ret = {
+                "msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"}
       else:
-          status = False
-          msg_ret = {
-              "msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"}
+        msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}>", "error": f"Share <{_share}> not found"}
+        status = False
   except Exception as error:
       msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>",
                   "error": f"<{error}>"}
       status = False
 
   return status, msg_ret, found_files
+
+
+def list_shares_in_service(_account_name, _connection_string):
+    output = []
+    try:
+        # Instantiate the ShareServiceClient from a connection string
+        file_service = ShareServiceClient.from_connection_string(_connection_string)
+        # List the shares in the file service
+        my_shares = list(file_service.list_shares())
+        output = [share['name'] for share in my_shares if share]
+        status = True
+        msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
+    except Exception as error:
+        status = False
+        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
+
+    return status, msg_ret, output
 
 
 def select_files(_file_pattern, _files_in_dir):
@@ -198,6 +223,7 @@ def select_files(_file_pattern, _files_in_dir):
 def main():
   module = AnsibleModule(
       argument_spec = dict(
+          account_name=dict(required=True, type='str'),
           share = dict(required = True, type = 'str'),
           connection_string = dict(required = True, type='str'),
           source_path = dict(required = False, type = 'str', default = ''),
@@ -206,13 +232,14 @@ def main():
       )
   )
 
+  account_name = module.params.get("account_name")
   share = module.params.get("share")
   connection_string = module.params.get("connection_string")
   source_path = module.params.get("source_path")
   files = module.params.get("files")
   dest_path = module.params.get("dest_path")
 
-  success, msg_ret, output = upload_files(share, connection_string, source_path, files, dest_path)
+  success, msg_ret, output = upload_files(account_name, share, connection_string, source_path, files, dest_path)
 
   if success:
       module.exit_json(failed=False, msg=msg_ret, content=output)
