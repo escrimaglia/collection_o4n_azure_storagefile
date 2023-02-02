@@ -106,7 +106,7 @@ from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 import re
-from o4n_azure_list_directories import list_directories_in_share
+from ansible_collections.escrimaglia.o4n_azure_storagefile.plugins.modules.o4n_azure_list_directories import list_directories_in_share
 
 
 def create_directory(_connection_string, _share, _directory, _state):
