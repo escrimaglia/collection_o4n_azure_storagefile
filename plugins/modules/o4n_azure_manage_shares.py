@@ -79,8 +79,8 @@ def create_client_with_connection_string(_conn_string):
         file_service = ShareServiceClient.from_connection_string(_conn_string)
 
 def manage_share(_share, _conn_string, _account_name, _state):
-    output = {}
     output = {"share": _share}
+    action = "none"
     try:
         # Instantiate the ShareClient from a connection string
         share = ShareClient.from_connection_string(_conn_string, share_name=_share)
@@ -91,8 +91,6 @@ def manage_share(_share, _conn_string, _account_name, _state):
         elif _state.lower() == "absent":
             share.delete_share()
             action = "deleted"
-        else:
-            action = "none"
         status = True
         msg_ret = {"msg": f"File Share <{_share}> <{action}> in account <{_account_name}>"}
     except aze.ResourceExistsError:

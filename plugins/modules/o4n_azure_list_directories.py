@@ -73,7 +73,7 @@ import re
 
 
 def list_directories_in_share(_account_name, _connection_string, _share, _dir):
-    output = {}
+    output = []
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
     if status:
         share_exist = [share_name['name'] for share_name in shares_in_service['shares'] if share_name['name'] == _share]
@@ -99,12 +99,12 @@ def list_directories_in_share(_account_name, _connection_string, _share, _dir):
 
 
 def main():
-    module = AnsibleModule(
-        argument_spec = dict(
-            account_name = dict(required = True, type = 'str'),
-            share = dict(required = True, type = 'str'),
-            connection_string = dict(required = True, type='str'),
-            path = dict(required = False, type = 'str', default = ''),
+    module=AnsibleModule(
+        argument_spec=dict(
+            account_name=dict(required=True, type='str'),
+            share=dict(required=True, type='str'),
+            connection_string=dict(required=True, type='str'),
+            path=dict(required=False, type='str'),
         )
     )
 
@@ -119,7 +119,7 @@ def main():
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
     else:
-        module.fail_json(failed=False, msg=msg_ret, content=output)
+        module.fail_json(failed=True, msg=msg_ret, content=output)
 
 
 if __name__ == "__main__":
