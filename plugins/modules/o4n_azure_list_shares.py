@@ -51,12 +51,13 @@ from ansible.module_utils.basic import AnsibleModule
 import os
 import sys
 
-def add_module_utils_to_syspath():
-    module_path_name =  (os.path.split(os.path.abspath(__file__)))
-    os.chdir(module_path_name[0]+"/..")
-    module_utils_path = os.getcwd()
-    os.chdir(module_path_name[0])
-    sys.path.insert(1, module_utils_path)
+# def add_module_utils_to_syspath():
+#     module_utils_path =  "~/.ansible/collections/ansible_collections/escrimaglia/o4n_azure_storagefile/plugins/module_utils"
+#     # os.chdir(module_path_name[0]+"/..")
+#     # module_utils_path = os.getcwd()
+#     # os.chdir(module_path_name[0])
+#     sys.path.insert(1, module_utils_path)
+#     print (sys.path)
 
 
 # def list_shares_in_service(_account_name, _connection_string):
@@ -77,7 +78,7 @@ def add_module_utils_to_syspath():
 
 
 def main():
-    add_module_utils_to_syspath()
+    #add_module_utils_to_syspath()
     module=AnsibleModule(
         argument_spec=dict(
             account_name=dict(required=True, type='str'),
