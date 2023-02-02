@@ -193,7 +193,7 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
     output = {}
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
     if status:
-        share_exist = [share_name['name'] for share_name in shares_in_service['shares'] if share_name['name'] == _share]
+        share_exist = [share_name for share_name in shares_in_service if share_name == _share]
     if len(share_exist) == 1:
         share = ShareClient.from_connection_string(_connection_string, _share)
         try:

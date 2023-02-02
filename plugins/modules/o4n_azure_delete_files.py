@@ -86,6 +86,7 @@ from azure.storage.fileshare import ShareClient
 import re
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
+from azure.storage.fileshare import ShareServiceClient
 
 
 def delete_files(_account_name, _connection_string, _share, _path, _files):
@@ -95,7 +96,7 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
     try:
       status, msg_ret, output = list_shares_in_service(_account_name, _connection_string)
       if status:
-          share_exist = [share['name'] for share in output['shares'] if share['name'] == _share]
+          share_exist = [share for share in output if share == _share]
           if len(share_exist) != 1:
               status = False
               msg_ret = f"Invalid File Share name: <{_share}>. File does not exist in Account Storage <{_account_name}>"
@@ -147,7 +148,6 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
 
 
 def list_shares_in_service(_account_name, _connection_string):
-    from azure.storage.fileshare import ShareServiceClient
     output = []
     try:
         # Instantiate the ShareServiceClient from a connection string
