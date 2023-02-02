@@ -46,28 +46,38 @@ tasks:
     register: output
 """
 
-from azure.storage.fileshare import ShareServiceClient
+#from azure.storage.fileshare import ShareServiceClient
 from ansible.module_utils.basic import AnsibleModule
+import os
+import sys
+
+def add_module_utils_to_syspath():
+    module_path_name =  (os.path.split(os.path.abspath(__file__)))
+    os.chdir(module_path_name[0]+"/..")
+    module_utils_path = os.getcwd()
+    os.chdir(module_path_name[0])
+    sys.path.insert(1, module_utils_path)
 
 
-def list_shares_in_service(_account_name, _connection_string):
-    output = []
-    try:
-        # Instantiate the ShareServiceClient from a connection string
-        file_service = ShareServiceClient.from_connection_string(_connection_string)
-        # List the shares in the file service
-        my_shares = list(file_service.list_shares())
-        output = [share['name'] for share in my_shares if share]
-        status = True
-        msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
-    except Exception as error:
-        status = False
-        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
+# def list_shares_in_service(_account_name, _connection_string):
+#     output = []
+#     try:
+#         # Instantiate the ShareServiceClient from a connection string
+#         file_service = ShareServiceClient.from_connection_string(_connection_string)
+#         # List the shares in the file service
+#         my_shares = list(file_service.list_shares())
+#         output = [share['name'] for share in my_shares if share]
+#         status = True
+#         msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
+#     except Exception as error:
+#         status = False
+#         msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
 
-    return status, msg_ret, output
+#     return status, msg_ret, output
 
 
 def main():
+    add_module_utils_to_syspath()
     module=AnsibleModule(
         argument_spec=dict(
             account_name=dict(required=True, type='str'),
@@ -78,6 +88,8 @@ def main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
 
+    from module_utils.util_list_shares import list_shares_in_service
+    
     success, msg_ret, output = list_shares_in_service(account_name, connection_string)
 
     if success:

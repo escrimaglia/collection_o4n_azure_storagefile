@@ -106,7 +106,15 @@ from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 import re
-from ansible_collections.escrimaglia.o4n_azure_storagefile.plugins.modules.o4n_azure_list_directories import list_directories_in_share
+import sys
+import os
+
+def add_module_utils_to_syspath():
+    module_path_name =  (os.path.split(os.path.abspath(__file__)))
+    os.chdir(module_path_name[0]+"/..")
+    module_utils_path = os.getcwd()
+    os.chdir(module_path_name[0])
+    sys.path.insert(1, module_utils_path)
 
 
 def create_directory(_connection_string, _share, _directory, _state):
@@ -163,6 +171,7 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
 
 
 def main():
+    add_module_utils_to_syspath()
     module = AnsibleModule(
         argument_spec=dict(
             share = dict(required = True, type = 'str'),
@@ -184,6 +193,7 @@ def main():
     parent_path_sub = re.sub(r"^\/*", "", parent_path)
 
     if parent_path_sub and parent_path:
+        from module_utils.util_list_directories import list_directories_in_share
         success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, parent_path_sub)
         if not success and str(state).lower() == "present":
           success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
