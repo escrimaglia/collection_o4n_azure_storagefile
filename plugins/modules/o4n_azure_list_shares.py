@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_list_shares
 short_description: List File Shares in Storage Account
@@ -26,8 +26,8 @@ requirements:
 options:
   connection_string:
     description:
-      String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
-      Storage Account -> Access Keys -> Connection String
+      - String that include URL & Token to connect to Azure Storage Account. Provided by Azure Portal
+      - Storage Account -> Access Keys -> Connection String
     required: true
     type: string
   account_name:
@@ -35,42 +35,43 @@ options:
       Storage Account Name Provided by Azure Portal
     required: true
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Delete files
     o4n_azure_list_shares:
       account_name: "{{ account_name }}"
       connection_string: "{{ connection_string }}"
     register: output
-'''
+"""
 
 from azure.storage.fileshare import ShareServiceClient
 from ansible.module_utils.basic import AnsibleModule
 
 
 def list_shares_in_service(_account_name, _connection_string):
-    output = {}
+    output = []
     try:
         # Instantiate the ShareServiceClient from a connection string
         file_service = ShareServiceClient.from_connection_string(_connection_string)
         # List the shares in the file service
-        output = {"shares": list(file_service.list_shares())}
+        my_shares = list(file_service.list_shares())
+        output = [share['name'] for share in my_shares if share]
         status = True
         msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
     except Exception as error:
         status = False
-        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error.args}>"}
+        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
 
     return status, msg_ret, output
 
 
 def main():
-    module = AnsibleModule(
+    module=AnsibleModule(
         argument_spec=dict(
-            account_name = dict(required=True, type='str'),
-            connection_string = dict(requiered=True, type='str')
+            account_name=dict(required=True, type='str'),
+            connection_string=dict(requiered=True, type='str')
         )
     )
 

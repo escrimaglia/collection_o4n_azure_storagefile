@@ -1,10 +1,6 @@
 {
     "ANSIBLE_MODULE_ARGS": {
-        "state": "present",
-        "account_name": "account_name",
-        "parent_path": "/dir2/dir4",
-        "share": "share-to-test2",
-        "connection_string": "DefaultEndpointsProtocol=https;AccountName=octionstorage;AccountKey=/wpBAhXAcl14ImtgjH3B+s4H2cBlCumkRk3IQCAnADvoM+tDFt2sCPxCQLyVXWg35ZdFUd+SDeW5+AStSZGCeQ==;EndpointSuffix=core.windows.net",
-        "path": "/dir5"
+        "account_name": "octionstorage",
+        "connection_string": "DefaultEndpointsProtocol=https;AccountName=octionstorage;AccountKey=/wpBAhXAcl14ImtgjH3B+s4H2cBlCumkRk3IQCAnADvoM+tDFt2sCPxCQLyVXWg35ZdFUd+SDeW5+AStSZGCeQ==;EndpointSuffix=core.windows.net"
     } 
 }
