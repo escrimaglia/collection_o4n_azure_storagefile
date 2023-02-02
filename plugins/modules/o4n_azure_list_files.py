@@ -59,7 +59,6 @@ tasks:
 '''
 
 from azure.storage.fileshare import ShareClient
-from o4n_azure_list_shares import list_shares_in_service
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 import re
@@ -95,6 +94,24 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
       status = False
 
   return status, msg_ret, output
+
+
+def list_shares_in_service(_account_name, _connection_string):
+    from azure.storage.fileshare import ShareServiceClient
+    output = []
+    try:
+        # Instantiate the ShareServiceClient from a connection string
+        file_service = ShareServiceClient.from_connection_string(_connection_string)
+        # List the shares in the file service
+        my_shares = list(file_service.list_shares())
+        output = [share['name'] for share in my_shares if share]
+        status = True
+        msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
+    except Exception as error:
+        status = False
+        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
+
+    return status, msg_ret, output
 
 
 def main():
