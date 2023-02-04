@@ -103,6 +103,7 @@ import os
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
 from azure.storage.fileshare import ShareServiceClient
+from azure.storage.fileshare import ShareFileClient
 import re
 
 
@@ -121,17 +122,15 @@ def upload_files(_account_name, _share, _connection_string, _source_path, _sourc
         share_exist = [share_name for share_name in shares_in_service if share_name == _share]
       if len(share_exist) == 1:
         share = ShareClient.from_connection_string(_connection_string, _share)
-        # search files to upload
         status, msg_ret, found_files = select_files(_source_file, files_in_dir)
         source_path = _source_path + "/" if _source_path else ""
         dest_path = _dest_path + "/" if _dest_path else ""
         if len(found_files) > 0:
             for file_name in found_files:
-                my_file = share.get_file_client("my_file")
                 file = share.get_file_client(dest_path + file_name)
                 # Upload files
                 with open(source_path + file_name, "rb") as source_file:
-                    file.upload_file(file_name)
+                    file.upload_file(source_file)
             status = True
             msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
         else:

@@ -99,8 +99,8 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
           share_exist = [share for share in output if share == _share]
           if len(share_exist) != 1:
               status = False
-              msg_ret = f"Invalid File Share name: <{_share}>. File does not exist in Account Storage <{_account_name}>"
-              return (status, msg_ret, found_files)
+              msg_ret = f"Invalid File Share name: <{_share}>. Share does not exist in Account Storage <{_account_name}>"
+              return status, msg_ret, found_files
     except Exception as error:
         status = False
         msg_ret = f"Invalid File Share name: <{_share}>. Listing Shares process failed"
@@ -109,7 +109,7 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
     try:
       # Instantiate the ShareFileClient from a connection string
       share = ShareClient.from_connection_string(_connection_string, _share)
-      status, msg_ret_pattern, files_in_share = list_files_in_share(_account_name, _connection_string, _share, _path)
+      status, msg_ret, files_in_share = list_files_in_share(_account_name, _connection_string, _share, _path)
       if status:
           status, msg_ret, found_files = select_files(_files,
                                           [file['name'] for file in files_in_share if file])
@@ -169,8 +169,12 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
     output = {}
     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
     if status:
-        share_exist = [share_name for share_name in shares_in_service['shares'] if share_name == _share]
-    if len(share_exist) == 1:
+        share_exist = [share_name for share_name in shares_in_service if share_name == _share]
+    if len(share_exist) != 1:
+        status = False
+        msg_ret = f"Invalid File Share name: <{_share}>. Share does not exist in Account Storage <{_account_name}>"
+        return status, msg_ret, []
+    else:
         share = ShareClient.from_connection_string(_connection_string, _share)
         try:
             # List files in the directory
@@ -188,10 +192,6 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
             status = False
             msg_ret = {"msg": f"List of Files not created for Directory </{_dir}> in share <{_share}>",
                         "error": f"<{error}>"}
-    else:
-        msg_ret = {"msg": f"List of Files not created for Directory </{_dir}> in share <{_share}>",
-                    "error": "Share not found"}
-        status = False
 
     return status, msg_ret, output
 
@@ -259,7 +259,7 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             account_name=dict(required=True, type='str'),
-            shar= dict(required=True, type='str'),
+            share= dict(required=True, type='str'),
             connection_string=dict(required=True, type='str'),
             path=dict(required=False, type='str', default=''),
             files=dict(required=True, type='str')
