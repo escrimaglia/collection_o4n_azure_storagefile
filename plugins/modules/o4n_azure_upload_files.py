@@ -124,9 +124,10 @@ def upload_files(_account_name, _share, _connection_string, _source_path, _sourc
         # search files to upload
         status, msg_ret, found_files = select_files(_source_file, files_in_dir)
         source_path = _source_path + "/" if _source_path else ""
-        dest_path = _dest_path + "/" if _source_path else ""
+        dest_path = _dest_path + "/" if _dest_path else ""
         if len(found_files) > 0:
             for file_name in found_files:
+                my_file = share.get_file_client("my_file")
                 file = share.get_file_client(dest_path + file_name)
                 # Upload files
                 with open(source_path + file_name, "rb") as source_file:
