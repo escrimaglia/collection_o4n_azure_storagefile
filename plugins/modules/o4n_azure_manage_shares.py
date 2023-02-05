@@ -92,15 +92,15 @@ def manage_share(_share, _conn_string, _account_name, _state):
             share.delete_share()
             action = "deleted"
         status = True
-        msg_ret = {"msg": f"File Share <{_share}> <{action}> in account <{_account_name}>"}
+        msg_ret = f"File Share <{_share}> <{action}> in account <{_account_name}>"
     except aze.ResourceExistsError:
-        msg_ret = {"msg": f"File Share <{_share}> not created in account <{_account_name}>", "error": "<The specified resource already exist>"}
+        msg_ret = f"File Share <{_share}> not created in account <{_account_name}>. Error: <The specified resource already exist>"
         status = True
     except aze.ResourceNotFoundError:
-        msg_ret = {"msg": f"File Share <{_share}> not deleted in account <{_account_name}>", "error": "<The specified resource does not exist>"}
+        msg_ret = f"File Share <{_share}> not deleted in account <{_account_name}>. Error: <The specified resource does not exist>"
         status = True
     except Exception as error:
-        msg_ret = {"msg": f"Error managing File Share <{_share}> in <{_account_name}>", "error": f"<{error}>"}
+        msg_ret = f"Error managing File Share <{_share}> in <{_account_name}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, output

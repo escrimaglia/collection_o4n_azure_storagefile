@@ -125,12 +125,12 @@ def create_directory(_connection_string, _share, _directory, _state):
         msg_ret = f"Directory </{_directory}> <{action}> in share <{_share}>"
     except aze.ResourceExistsError:
         status = False
-        msg_ret = {"msg": f"Directory </{_directory}> not <{action}> in share <{_share}>", "error": "<The specified resource already exist>"}
+        msg_ret = f"Directory </{_directory}> not <{action}> in share <{_share}>. Error: <The specified resource already exist>"
     except aze.ResourceNotFoundError:
         status = False
-        msg_ret = {"msg": f"Directory </{_directory}> not <{action}> in share <{_share}>", "error": "<The specified resource does not exist>"}
+        msg_ret = f"Directory </{_directory}> not <{action}> in share <{_share}>. Error: <The specified resource does not exist>"
     except Exception as error:
-        msg_ret = {"msg": f"Error managing Directory </{_directory}> in share <{_share}>", "error": f"<{error}>"}
+        msg_ret = f"Error managing Directory </{_directory}> in share <{_share}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, _directory
@@ -148,15 +148,15 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
             action = "deleted"
             parent_dir.delete_subdirectory(_directory)
         status = True
-        msg_ret = {"msg": f"Sub Directory </{_directory}> <{action}> under Directory </{_parent_directory}> in share <{_share}>"}
+        msg_ret = f"Sub Directory </{_directory}> <{action}> under Directory </{_parent_directory}> in share <{_share}>"
     except aze.ResourceExistsError as error:
         status = True
-        msg_ret = {"msg": f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>", "error": "<The specified resource already exist>"}
+        msg_ret = f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <The specified resource already exist>"
     except aze.ResourceNotFoundError:
         status = True
-        msg_ret = {"msg": f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>", "error": "<The specified resource does not exist>"}   
+        msg_ret = f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <The specified resource does not exist>"   
     except Exception as error:
-        msg_ret = {"msg": f"Error managing Sub Directory </{_directory}>. Parent Directory </{_parent_directory}>, share <{_share}>", "error": f"<{error}>"}
+        msg_ret = f"Error managing Sub Directory </{_directory}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, "/" + _parent_directory + "/"+ _directory
@@ -173,16 +173,16 @@ def list_directories_in_share(_account_name, _connection_string, _share, _dir):
             # List directories in share
             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
             status = True
-            msg_ret = {"msg": f"List of Directories created for Directory </{_dir}> in share <{_share}>"}
+            msg_ret = f"List of Directories created for Directory </{_dir}> in share <{_share}>"
             output = [{"name": file['name'],"file_id": file['file_id'],"is_directory": file['is_directory']} for file in my_files['results'] if file['is_directory']]
         except aze.ResourceNotFoundError:
-            msg_ret = {"msg": f"List of Directories not created for Directory </{_dir}> in share <{_share}>", "error": "Directory not found"}
+            msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Directory not found"
             status = False
         except Exception as error:
             status = False
-            msg_ret = {"msg": f"List of Directories not created for Directory </{_dir}> in share <{_share}>", "error": f"<{error}>"}
+            msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
     else:
-        msg_ret = {"msg": f"List of Directories not created for Directory </{_dir}> in share <{_share}>", "error": "Share not found"}
+        msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
         status = False
 
     return status, msg_ret, output
@@ -197,10 +197,10 @@ def list_shares_in_service(_account_name, _connection_string):
         my_shares = list(file_service.list_shares())
         output = [share['name'] for share in my_shares if share]
         status = True
-        msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
+        msg_ret = f"List of Shares created in account <{_account_name}>"
     except Exception as error:
         status = False
-        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
+        msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
 
     return status, msg_ret, output
 

@@ -132,17 +132,15 @@ def upload_files(_account_name, _share, _connection_string, _source_path, _sourc
                 with open(source_path + file_name, "rb") as source_file:
                     file.upload_file(source_file)
             status = True
-            msg_ret = {"msg": f"File <{found_files}> uploaded to Directory </{_dest_path}> in share <{_share}>"}
+            msg_ret = f"Files uploaded to Directory </{_dest_path}> in share <{_share}>"
         else:
             status = False
-            msg_ret = {
-                "msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"}
+            msg_ret = f"Files not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"
       else:
-        msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}>", "error": f"Share <{_share}> not found"}
+        msg_ret = f"Files not uploaded to Directory </{_dest_path}>. Error: Share <{_share}> not found"
         status = False
   except Exception as error:
-      msg_ret = {"msg": f"File <{found_files}> not uploaded to Directory </{_dest_path}> in share <{_share}>",
-                  "error": f"<{error}>"}
+      msg_ret = f"File not uploaded to Directory </{_dest_path}> in share <{_share}>. Error: <{error}>"
       status = False
 
   return status, msg_ret, found_files
@@ -157,10 +155,10 @@ def list_shares_in_service(_account_name, _connection_string):
         my_shares = list(file_service.list_shares())
         output = [share['name'] for share in my_shares if share]
         status = True
-        msg_ret = {"msg": f"List of Shares created in account <{_account_name}>"}
+        msg_ret = f"List of Shares created in account <{_account_name}>"
     except Exception as error:
         status = False
-        msg_ret = {"msg": f"List of Shares not created in account <{_account_name}>", "error": f"<{error}>"}
+        msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
 
     return status, msg_ret, output
 
