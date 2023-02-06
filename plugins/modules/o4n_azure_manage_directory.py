@@ -165,15 +165,17 @@ def create_directory(_connection_string, _share, _directory, _state):
     except aze.ResourceExistsError:
         status = False
         msg_ret = f"Directory <{_directory}> not <{action}>. The Directory already exist>"
+        return status, msg_ret, _directory
     except aze.ResourceNotFoundError:
         status = False
         msg_ret = f"Directory <{_directory}> not <{action}> in share <{_share}>. The Directory does not exist>"
+        return status, msg_ret, _directory
     except Exception as error:
         msg_ret = f"Error managing Directory <{_directory}> in share <{_share}>. Error: <{error}>"
         status = False
+        return status, msg_ret, _directory
 
     return status, msg_ret, _directory
-
 
 def create_subdirectory(_connection_string, _share, _directory, _parent_directory, _state):
     share = ShareClient.from_connection_string(_connection_string, _share)
@@ -191,15 +193,17 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
     except aze.ResourceExistsError as error:
         status = True
         msg_ret = f"Sub Directory <{_directory}> not <{action}> in Parent Directory <{_parent_directory}>. The Directory already exist>"
+        return status, msg_ret, "/" + _parent_directory + "/"+ _directory
     except aze.ResourceNotFoundError:
         status = True
-        msg_ret = f"Sub Directory <{_directory}> not <{action}>. Resource <{_parent_directory}> and/or <{_directory}>in share <{_share}> do not exist>"   
+        msg_ret = f"Sub Directory <{_directory}> not <{action}>. Resource <{_parent_directory}> and/or <{_directory}>in share <{_share}> do not exist>"
+        return status, msg_ret, "/" + _parent_directory + "/"+ _directory  
     except Exception as error:
         msg_ret = f"Error managing Sub Directory <{_directory}> in Parent Directory <{_parent_directory}>, share <{_share}>. Error: <{error}>"
         status = False
+        return status, msg_ret, "/" + _parent_directory + "/"+ _directory
 
     return status, msg_ret, "/" + _parent_directory + "/"+ _directory
-
 
 # def list_directories_in_share(_account_name, _connection_string, _share, _dir):
 #     output = []
