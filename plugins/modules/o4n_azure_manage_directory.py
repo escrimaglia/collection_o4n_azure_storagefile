@@ -267,22 +267,22 @@ def main():
 
 
     if not parent_path_sub:
-        success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
+        success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
     else:
         success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
 
-    if parent_path_sub and parent_path:
-        success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, parent_path_sub)
-        if not success and str(state).lower() == "present":
-          success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
-          if success:
-              success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
-    elif not parent_path_sub and parent_path:
-        success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
-    else:
-      success = False
-      msg_ret = f"Invalid sub Directory <{path}>, Directory <{parent_path}> in share <{share}>"
-      output= []
+    # if parent_path_sub and parent_path:
+    #     success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, parent_path_sub)
+    #     if not success and str(state).lower() == "present":
+    #       success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
+    #       if success:
+    #           success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
+    # elif not parent_path_sub and parent_path:
+    #     success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
+    # else:
+    #   success = False
+    #   msg_ret = f"Invalid sub Directory <{path}>, Directory <{parent_path}> in share <{share}>"
+    #   output= []
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
