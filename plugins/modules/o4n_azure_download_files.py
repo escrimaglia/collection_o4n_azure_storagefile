@@ -108,8 +108,12 @@ tasks:
 from azure.storage.fileshare import ShareClient
 import re
 from ansible.module_utils.basic import AnsibleModule
-from azure.storage.fileshare import ShareServiceClient
-import azure.core.exceptions as aze
+#from azure.storage.fileshare import ShareServiceClient
+#import azure.core.exceptions as aze
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_files import list_files_in_share
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
+
 
 
 def download_files(_account_name, _connection_string, _share, _source_path, _files, _local_path):
@@ -169,109 +173,109 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
     return status, msg_ret, found_files
 
 
-def list_shares_in_service(_account_name, _connection_string):
-    output = []
-    try:
-        # Instantiate the ShareServiceClient from a connection string
-        file_service = ShareServiceClient.from_connection_string(_connection_string)
-        # List the shares in the file service
-        my_shares = list(file_service.list_shares())
-        output = [share['name'] for share in my_shares if share]
-        status = True
-        msg_ret = f"List of Shares created in account <{_account_name}>"
-    except Exception as error:
-        status = False
-        msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
+# def list_shares_in_service(_account_name, _connection_string):
+#     output = []
+#     try:
+#         # Instantiate the ShareServiceClient from a connection string
+#         file_service = ShareServiceClient.from_connection_string(_connection_string)
+#         # List the shares in the file service
+#         my_shares = list(file_service.list_shares())
+#         output = [share['name'] for share in my_shares if share]
+#         status = True
+#         msg_ret = f"List of Shares created in account <{_account_name}>"
+#     except Exception as error:
+#         status = False
+#         msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
 
-    return status, msg_ret, output
-
-
-def list_files_in_share(_account_name, _connection_string, _share, _dir):
-    _dir = re.sub(r"^\/*", "", _dir)
-    output = {}
-    status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
-    if status:
-        share_exist = [share_name for share_name in shares_in_service if share_name == _share]
-    if len(share_exist) == 1:
-        share = ShareClient.from_connection_string(_connection_string, _share)
-        try:
-            # List files in the directory
-            my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
-            status = True
-            msg_ret = f"List of Files created for Directory </{_dir}> in share <{_share}>"
-            output = [{"name": file['name'], "size": file['size'], "file_id": file['file_id'],
-                        "is_directory": file['is_directory']} for file in my_files['results'] if
-                        not file['is_directory']]
-        except aze.ResourceNotFoundError:
-            msg_ret = f"No files to list in Directory </{_dir}> in share <{_share}>. Error: Directory not found"
-            status = False
-        except Exception as error:
-            status = False
-            msg_ret = f"List of Files not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
-    else:
-        msg_ret = f"List of Files not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
-        status = False
-
-    return status, msg_ret, output
+#     return status, msg_ret, output
 
 
-def select_files(_file_pattern, _files_in_dir):
-    msg_ret = f"Files selection done for <{_file_pattern}>"
-    status = True
-    name_and_exension_pattern = re.split(r"\.", _file_pattern)
-    pattern_file_ext = name_and_exension_pattern[1] if len(name_and_exension_pattern) == 2 else []
-    pattern_file_name = name_and_exension_pattern[0]
-    try:
-        if _file_pattern == "*.*":  # *.*
-            return status, msg_ret, _files_in_dir
-        elif len(name_and_exension_pattern) == 1:  # file*
-            file_name_pattern = re.split(r"\*", pattern_file_name)[0]
-            return status, msg_ret, [file for file in _files_in_dir if re.split(r"\.", file)[0].startswith(file_name_pattern)]
-        elif len(name_and_exension_pattern) == 2:
-            if pattern_file_name.startswith("*") and not "*" in pattern_file_ext:  # *.txt
-                return status, msg_ret, [file for file in _files_in_dir if len(re.split(r"\.", file)) == 2 and
-                                            pattern_file_ext == re.split(r"\.", file)[1]]
-            elif pattern_file_ext.startswith("*") and not "*" in pattern_file_name:  # file.*
-                return status, msg_ret, [file for file in _files_in_dir if pattern_file_name == re.split(r"\.", file)[0]]
-            elif "*" in pattern_file_name and not "*" in pattern_file_ext:  # file*.txt
-                name_pattern = re.split(r"\*", pattern_file_name)[0]
-                return status, msg_ret, [file for file in _files_in_dir if
-                                            len(re.split(r"\.", file)) == 2 and file.startswith(name_pattern) and
-                                            pattern_file_ext == re.split(r"\.", file)[1]]
-            elif not "*" in pattern_file_name and "*" in pattern_file_ext:  # file.t*
-                file_ext_pattern = re.split(r"\*", pattern_file_ext)[0]
-                return status, msg_ret, [file for file in _files_in_dir if pattern_file_name == re.split(r"\.", file)[0]
-                                            and len(re.split(r"\.", file)) == 2 and 
-                                            file_ext_pattern in re.split(r"\.", file)[1]]
-            elif "*" in pattern_file_name and "*" in pattern_file_ext:  # file*.t*
-                file_name_pattern = re.split(r"\*", pattern_file_name)[0]
-                file_ext_pattern = re.split(r"\*", pattern_file_ext)[0]
-                return status, msg_ret, [file for file in _files_in_dir if re.split(r"\.", file)[0].startswith(file_name_pattern)
-                                            and re.split(r"\.", file)[1].startswith(file_ext_pattern)]
-            elif "*" in pattern_file_name and pattern_file_ext == "*":  # file*.*
-                file_name_pattern = re.split(r"\*", pattern_file_name)[0]
-                file_ext_pattern = pattern_file_ext
-                return status, msg_ret, [file for file in _files_in_dir if
-                                            re.split(r"\.", file)[0].startswith(file_name_pattern)
-                                            and re.split(r"\.", file)[1] == "*"]
-            elif not "*" in pattern_file_name and not "*" in pattern_file_ext:  # file.txt
-                file_name_pattern = pattern_file_name
-                file_ext_pattern = pattern_file_ext
-                return status, msg_ret, [file for file in _files_in_dir if file_name_pattern == re.split(r"\.", file)[0]
-                                            and len(re.split(r"\.", file)) == 2 and 
-                                            file_ext_pattern == re.split(r"\.", file)[1]]
-            else:
-                status = False
-                msg_ret = f"Invalid file name: <{_file_pattern}>"
-                return status, msg_ret, []
-        else:
-            status = False
-            msg_ret = f"Invalid file name: <{_file_pattern}>"
-            return status, msg_ret, []
-    except Exception as error:
-        status = False
-        msg_ret = f"Files selection failed for <{_file_pattern}> pattern, error: <{error.args}>"
-        return status, msg_ret, []
+# def list_files_in_share(_account_name, _connection_string, _share, _dir):
+#     _dir = re.sub(r"^\/*", "", _dir)
+#     output = {}
+#     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
+#     if status:
+#         share_exist = [share_name for share_name in shares_in_service if share_name == _share]
+#     if len(share_exist) == 1:
+#         share = ShareClient.from_connection_string(_connection_string, _share)
+#         try:
+#             # List files in the directory
+#             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
+#             status = True
+#             msg_ret = f"List of Files created for Directory </{_dir}> in share <{_share}>"
+#             output = [{"name": file['name'], "size": file['size'], "file_id": file['file_id'],
+#                         "is_directory": file['is_directory']} for file in my_files['results'] if
+#                         not file['is_directory']]
+#         except aze.ResourceNotFoundError:
+#             msg_ret = f"No files to list in Directory </{_dir}> in share <{_share}>. Error: Directory not found"
+#             status = False
+#         except Exception as error:
+#             status = False
+#             msg_ret = f"List of Files not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
+#     else:
+#         msg_ret = f"List of Files not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
+#         status = False
+
+#     return status, msg_ret, output
+
+
+# def select_files(_file_pattern, _files_in_dir):
+#     msg_ret = f"Files selection done for <{_file_pattern}>"
+#     status = True
+#     name_and_exension_pattern = re.split(r"\.", _file_pattern)
+#     pattern_file_ext = name_and_exension_pattern[1] if len(name_and_exension_pattern) == 2 else []
+#     pattern_file_name = name_and_exension_pattern[0]
+#     try:
+#         if _file_pattern == "*.*":  # *.*
+#             return status, msg_ret, _files_in_dir
+#         elif len(name_and_exension_pattern) == 1:  # file*
+#             file_name_pattern = re.split(r"\*", pattern_file_name)[0]
+#             return status, msg_ret, [file for file in _files_in_dir if re.split(r"\.", file)[0].startswith(file_name_pattern)]
+#         elif len(name_and_exension_pattern) == 2:
+#             if pattern_file_name.startswith("*") and not "*" in pattern_file_ext:  # *.txt
+#                 return status, msg_ret, [file for file in _files_in_dir if len(re.split(r"\.", file)) == 2 and
+#                                             pattern_file_ext == re.split(r"\.", file)[1]]
+#             elif pattern_file_ext.startswith("*") and not "*" in pattern_file_name:  # file.*
+#                 return status, msg_ret, [file for file in _files_in_dir if pattern_file_name == re.split(r"\.", file)[0]]
+#             elif "*" in pattern_file_name and not "*" in pattern_file_ext:  # file*.txt
+#                 name_pattern = re.split(r"\*", pattern_file_name)[0]
+#                 return status, msg_ret, [file for file in _files_in_dir if
+#                                             len(re.split(r"\.", file)) == 2 and file.startswith(name_pattern) and
+#                                             pattern_file_ext == re.split(r"\.", file)[1]]
+#             elif not "*" in pattern_file_name and "*" in pattern_file_ext:  # file.t*
+#                 file_ext_pattern = re.split(r"\*", pattern_file_ext)[0]
+#                 return status, msg_ret, [file for file in _files_in_dir if pattern_file_name == re.split(r"\.", file)[0]
+#                                             and len(re.split(r"\.", file)) == 2 and 
+#                                             file_ext_pattern in re.split(r"\.", file)[1]]
+#             elif "*" in pattern_file_name and "*" in pattern_file_ext:  # file*.t*
+#                 file_name_pattern = re.split(r"\*", pattern_file_name)[0]
+#                 file_ext_pattern = re.split(r"\*", pattern_file_ext)[0]
+#                 return status, msg_ret, [file for file in _files_in_dir if re.split(r"\.", file)[0].startswith(file_name_pattern)
+#                                             and re.split(r"\.", file)[1].startswith(file_ext_pattern)]
+#             elif "*" in pattern_file_name and pattern_file_ext == "*":  # file*.*
+#                 file_name_pattern = re.split(r"\*", pattern_file_name)[0]
+#                 file_ext_pattern = pattern_file_ext
+#                 return status, msg_ret, [file for file in _files_in_dir if
+#                                             re.split(r"\.", file)[0].startswith(file_name_pattern)
+#                                             and re.split(r"\.", file)[1] == "*"]
+#             elif not "*" in pattern_file_name and not "*" in pattern_file_ext:  # file.txt
+#                 file_name_pattern = pattern_file_name
+#                 file_ext_pattern = pattern_file_ext
+#                 return status, msg_ret, [file for file in _files_in_dir if file_name_pattern == re.split(r"\.", file)[0]
+#                                             and len(re.split(r"\.", file)) == 2 and 
+#                                             file_ext_pattern == re.split(r"\.", file)[1]]
+#             else:
+#                 status = False
+#                 msg_ret = f"Invalid file name: <{_file_pattern}>"
+#                 return status, msg_ret, []
+#         else:
+#             status = False
+#             msg_ret = f"Invalid file name: <{_file_pattern}>"
+#             return status, msg_ret, []
+#     except Exception as error:
+#         status = False
+#         msg_ret = f"Files selection failed for <{_file_pattern}> pattern, error: <{error.args}>"
+#         return status, msg_ret, []
 
 
 def main():

@@ -1,5 +1,7 @@
 from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
+
 
 def list_directories_in_share(_account_name, _connection_string, _share, _dir):
     output = []

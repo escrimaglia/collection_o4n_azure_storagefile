@@ -106,7 +106,10 @@ from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 import re
-from azure.storage.fileshare import ShareServiceClient
+#from azure.storage.fileshare import ShareServiceClient
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_directories import list_directories_in_share
+
 
 
 def create_directory(_connection_string, _share, _directory, _state):
@@ -162,47 +165,47 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
     return status, msg_ret, "/" + _parent_directory + "/"+ _directory
 
 
-def list_directories_in_share(_account_name, _connection_string, _share, _dir):
-    output = []
-    status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
-    if status:
-        share_exist = [share_name for share_name in shares_in_service if share_name == _share]
-    if len(share_exist) == 1:
-        share = ShareClient.from_connection_string(_connection_string, _share)
-        try:
-            # List directories in share
-            my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
-            status = True
-            msg_ret = f"List of Directories created for Directory </{_dir}> in share <{_share}>"
-            output = [{"name": file['name'],"file_id": file['file_id'],"is_directory": file['is_directory']} for file in my_files['results'] if file['is_directory']]
-        except aze.ResourceNotFoundError:
-            msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Directory not found"
-            status = False
-        except Exception as error:
-            status = False
-            msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
-    else:
-        msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
-        status = False
+# def list_directories_in_share(_account_name, _connection_string, _share, _dir):
+#     output = []
+#     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
+#     if status:
+#         share_exist = [share_name for share_name in shares_in_service if share_name == _share]
+#     if len(share_exist) == 1:
+#         share = ShareClient.from_connection_string(_connection_string, _share)
+#         try:
+#             # List directories in share
+#             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
+#             status = True
+#             msg_ret = f"List of Directories created for Directory </{_dir}> in share <{_share}>"
+#             output = [{"name": file['name'],"file_id": file['file_id'],"is_directory": file['is_directory']} for file in my_files['results'] if file['is_directory']]
+#         except aze.ResourceNotFoundError:
+#             msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Directory not found"
+#             status = False
+#         except Exception as error:
+#             status = False
+#             msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
+#     else:
+#         msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
+#         status = False
 
-    return status, msg_ret, output
+#     return status, msg_ret, output
 
 
-def list_shares_in_service(_account_name, _connection_string):
-    output = []
-    try:
-        # Instantiate the ShareServiceClient from a connection string
-        file_service = ShareServiceClient.from_connection_string(_connection_string)
-        # List the shares in the file service
-        my_shares = list(file_service.list_shares())
-        output = [share['name'] for share in my_shares if share]
-        status = True
-        msg_ret = f"List of Shares created in account <{_account_name}>"
-    except Exception as error:
-        status = False
-        msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
+# def list_shares_in_service(_account_name, _connection_string):
+#     output = []
+#     try:
+#         # Instantiate the ShareServiceClient from a connection string
+#         file_service = ShareServiceClient.from_connection_string(_connection_string)
+#         # List the shares in the file service
+#         my_shares = list(file_service.list_shares())
+#         output = [share['name'] for share in my_shares if share]
+#         status = True
+#         msg_ret = f"List of Shares created in account <{_account_name}>"
+#     except Exception as error:
+#         status = False
+#         msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
 
-    return status, msg_ret, output
+#     return status, msg_ret, output
 
 
 def main():
