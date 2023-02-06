@@ -63,7 +63,7 @@ options:
     type: string
 '''
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Create Directory
     o4n_azure_manage_directory:
@@ -73,15 +73,17 @@ tasks:
       path: /dir1
     register: output
 
-  - name: Create Sub Directory
+  - name: Create list of Directories
     o4n_azure_manage_directory:
       account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
-      path: /dir2
-      parent_path: /dir1
+      path: "{{ item }}"
     register: output
-    
+    loop: 
+      - "/Dir2"
+      - "/Dir3"
+
   - name: Delete Directory
     o4n_azure_manage_directory:
       account_name: "{{ account_name }}"
@@ -90,6 +92,40 @@ tasks:
       path: /dir1
       state: absent
       register: output
+
+  - name: Create Sub Directory
+    o4n_azure_manage_directory:
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: /dir2
+      parent_path: /dir1
+    register: output
+
+  - name: Create a list of Sub Directories in Directory Dir1
+    o4n_azure_manage_directory:
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: "{{ item }}"
+      parent_path: /dir1
+    register: output
+    loop:
+      - "/dir2"
+      - "/Dir3"
+
+  - name: Create a list of nested Sub Directories 
+    o4n_azure_manage_directory:
+      account_name: "{{ account_name }}"
+      share: share-to-test
+      connection_string: "{{ connection_string }}"
+      path: "{{ item.dir }}"
+      parent_path: "{{ item.subdir }}"
+    register: output
+    loop:
+      - {"subdir": "", "dir": "/Dir1" }
+      - {"subdir": "/Dir1", "dir": "/Dir2"}
+      - {"subdir": "/Dir1/Dir2", "dir": "/Dir3"}
 
   - name: Delete Sub Directory
     o4n_azure_manage_directory:
@@ -100,7 +136,7 @@ tasks:
       parent_path: /dir1
       state: absent
     register: output
-'''
+"""
 
 from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
@@ -120,20 +156,20 @@ def create_directory(_connection_string, _share, _directory, _state):
         if _state.lower() == "present":
             action = "created"
             new_directory.create_directory()
-            msg_ret = f"Directory </{_directory}> created in share <{_share}>"
+            msg_ret = f"Directory <{_directory}> created in share <{_share}>"
         elif _state.lower() == "absent":
             action = "deleted"
             new_directory.delete_directory()
         status = True
-        msg_ret = f"Directory </{_directory}> <{action}> in share <{_share}>"
+        msg_ret = f"Directory <{_directory}> <{action}> in share <{_share}>"
     except aze.ResourceExistsError:
         status = False
-        msg_ret = f"Directory </{_directory}> not <{action}> in share <{_share}>. Error: <The specified resource already exist>"
+        msg_ret = f"Directory <{_directory}> not <{action}>. The Directory already exist>"
     except aze.ResourceNotFoundError:
         status = False
-        msg_ret = f"Directory </{_directory}> not <{action}> in share <{_share}>. Error: <The specified resource does not exist>"
+        msg_ret = f"Directory <{_directory}> not <{action}> in share <{_share}>. The Directory does not exist>"
     except Exception as error:
-        msg_ret = f"Error managing Directory </{_directory}> in share <{_share}>. Error: <{error}>"
+        msg_ret = f"Error managing Directory <{_directory}> in share <{_share}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, _directory
@@ -151,15 +187,15 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
             action = "deleted"
             parent_dir.delete_subdirectory(_directory)
         status = True
-        msg_ret = f"Sub Directory </{_directory}> <{action}> under Directory </{_parent_directory}> in share <{_share}>"
+        msg_ret = f"Sub Directory <{_directory}> <{action}> under Directory <{_parent_directory}> in share <{_share}>"
     except aze.ResourceExistsError as error:
         status = True
-        msg_ret = f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <The specified resource already exist>"
+        msg_ret = f"Sub Directory <{_directory}> not <{action}> in Parent Directory <{_parent_directory}>. The Directory already exist>"
     except aze.ResourceNotFoundError:
         status = True
-        msg_ret = f"Sub Directory </{_directory}> not <{action}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <The specified resource does not exist>"   
+        msg_ret = f"Sub Directory <{_directory}> not <{action}>. Resource <{_parent_directory}> and/or <{_directory}>in share <{_share}> do not exist>"   
     except Exception as error:
-        msg_ret = f"Error managing Sub Directory </{_directory}>. Parent Directory </{_parent_directory}>, share <{_share}>. Error: <{error}>"
+        msg_ret = f"Error managing Sub Directory <{_directory}> in Parent Directory <{_parent_directory}>, share <{_share}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, "/" + _parent_directory + "/"+ _directory
@@ -229,6 +265,12 @@ def main():
     path_sub = re.sub(r"^\/*", "", path)
     parent_path_sub = re.sub(r"^\/*", "", parent_path)
 
+
+    if not parent_path_sub:
+        success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
+    else:
+        success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
+
     if parent_path_sub and parent_path:
         success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, parent_path_sub)
         if not success and str(state).lower() == "present":
@@ -239,7 +281,7 @@ def main():
         success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
     else:
       success = False
-      msg_ret = {"msg": f"Invalid sub Directory </{path}>, Directory </{parent_path}> in share <{share}>"}
+      msg_ret = f"Invalid sub Directory <{path}>, Directory <{parent_path}> in share <{share}>"
       output= []
 
     if success:
