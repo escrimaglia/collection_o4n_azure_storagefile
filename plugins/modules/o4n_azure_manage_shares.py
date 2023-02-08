@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_manage_share
 short_description: Create or Delete a share in a Azure Storage File
@@ -49,9 +49,9 @@ options:
       Storage Account Name Provided by Azure Portal
     required: true
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Create a share
     o4n_azure_manage_share:
@@ -67,7 +67,20 @@ tasks:
       share: share-to-test
       connection_string: "{{ connection_string }}"
     register: output
-'''
+"""
+
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": {
+            "share": "share-to-test"
+        },
+        "failed": false,
+        "msg": "File Share <share-to-test> <created> in account <octionstorage>"
+    }
+}
+"""
 
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule

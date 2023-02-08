@@ -82,19 +82,33 @@ tasks:
     register: output
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "o4n_azure_list_directories.py",
+            "o4n_azure_list_files.py",
+            "o4n_azure_list_shares.py"
+        ],
+        "failed": false,
+        "msg": "File deleted from Directory </dir1> in share <share-to-test2>"
+    }
+}
+"""
+
 from azure.storage.fileshare import ShareClient
 import re
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
-#from azure.storage.fileshare import ShareServiceClient
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_files import list_files_in_share
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
 
 
-
 def delete_files(_account_name, _connection_string, _share, _path, _files):
-    _path = re.sub(r"^\/*", "", _path)
+    _path = re.sub(r"^\/", "", _path)
+    _path = re.sub(r"\/$", "", _path)
     found_files = []
     # check if share and path exist in Account Storage
     try:
@@ -124,24 +138,24 @@ def delete_files(_account_name, _connection_string, _share, _path, _files):
                   # delete the file
                   file.delete_file()
               status = True
-              msg_ret = f"File deleted from Directory </{_path}> in share <{_share}>"
+              msg_ret = f"File deleted from Directory <{_path}> in share <{_share}>"
           elif len(found_files) == 1:
               file = share.get_file_client(path + found_files[0])
               # delete the file
               file.delete_file()
               status = True
-              msg_ret = f"File deleted from Directory </{_path}> in share <{_share}>"
+              msg_ret = f"File deleted from Directory <{_path}> in share <{_share}>"
           else:
               status = True
-              msg_ret = f"Files not deleted from Directory </{_path}> in share <{_share}>. No file to delete"
+              msg_ret = f"Files not deleted from Directory <{_path}> in share <{_share}>. No file to delete"
       else:
           msg_ret = f"Invalid Directory: <{_path}> in File Share <{_share}>"
           status = False
     except aze.ResourceNotFoundError:
-      msg_ret = f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>. Error: Resource not found"
+      msg_ret = f"File <{found_files}> not deleted from Directory <{_path}> in share <{_share}>. Error: Resource not found"
       status = False
     except Exception as error:
-      msg_ret = f"File <{found_files}> not deleted from Directory </{_path}> in share <{_share}>. Error: <{error}>"
+      msg_ret = f"File <{found_files}> not deleted from Directory <{_path}> in share <{_share}>. Error: <{error}>"
       status = False
 
     return status, msg_ret, found_files

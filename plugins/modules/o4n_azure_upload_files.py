@@ -99,21 +99,40 @@ tasks:
       register: output
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "o4n_azure_list_files.py",
+            "o4n_azure_list_shares.py",
+            "o4n_azure_download_files.py",
+            "o4n_azure_manage_shares.py",
+            "__init__.py",
+            "o4n_azure_manage_directory.py",
+            "o4n_azure_upload_files.py",
+            "o4n_azure_delete_files.py",
+            "o4n_azure_list_directories.py"
+        ],
+        "failed": false,
+        "msg": "Files uploaded to Directory </dir1> in share <share-to-test2>"
+    }
+}
+"""
+
 import os
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
-# from azure.storage.fileshare import ShareServiceClient
-# from azure.storage.fileshare import ShareFileClient
 import re
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
 
 
-
 def upload_files(_account_name, _share, _connection_string, _source_path, _source_file, _dest_path):
   found_files = []
   # casting some vars
-  _dest_path = re.sub(r"^\/*", "", _dest_path)
+  _dest_path = re.sub(r"^\/", "", _dest_path)
+  _dest_path = re.sub(r"\/$", "", _dest_path)
   try:
       # get files form local file system
       base_dir = os.getcwd() + "/" + _source_path + "/"
@@ -135,15 +154,15 @@ def upload_files(_account_name, _share, _connection_string, _source_path, _sourc
                 with open(source_path + file_name, "rb") as source_file:
                     file.upload_file(source_file)
             status = True
-            msg_ret = f"Files uploaded to Directory </{_dest_path}> in share <{_share}>"
+            msg_ret = f"Files uploaded to Directory <{_dest_path}> in share <{_share}>"
         else:
             status = False
-            msg_ret = f"Files not uploaded to Directory </{_dest_path}> in share <{_share}>. No file to upload"
+            msg_ret = f"Files not uploaded to Directory <{_dest_path}> in share <{_share}>. No file to upload"
       else:
-        msg_ret = f"Files not uploaded to Directory </{_dest_path}>. Error: Share <{_share}> not found"
+        msg_ret = f"Files not uploaded to Directory <{_dest_path}>. Error: Share <{_share}> not found"
         status = False
   except Exception as error:
-      msg_ret = f"File not uploaded to Directory </{_dest_path}> in share <{_share}>. Error: <{error}>"
+      msg_ret = f"File not uploaded to Directory <{_dest_path}> in share <{_share}>. Error: <{error}>"
       status = False
 
   return status, msg_ret, found_files

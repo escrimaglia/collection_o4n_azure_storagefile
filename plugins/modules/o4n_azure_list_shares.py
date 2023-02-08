@@ -46,13 +46,27 @@ tasks:
     register: output
 """
 
-#from azure.storage.fileshare import ShareServiceClient
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "automation-filesharing",
+            "share-bp-cu3",
+            "share-to-test",
+            "share-to-test2"
+        ],
+        "failed": false,
+        "msg": "List of Shares created in account <octionstorage>"
+    }
+}
+"""
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 
 
 def main():
-    #add_module_utils_to_syspath()
     module=AnsibleModule(
         argument_spec=dict(
             account_name=dict(required=True, type='str'),

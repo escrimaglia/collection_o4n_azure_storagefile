@@ -138,11 +138,21 @@ tasks:
     register: output
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": "/dir1/dir3",
+        "failed": false,
+        "msg": "Sub Directory <dir3> <created> under Directory <dir1> in share <share-to-test2>"
+    }
+}
+"""
+
 from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze
 from ansible.module_utils.basic import AnsibleModule
 import re
-#from azure.storage.fileshare import ShareServiceClient
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_directories import list_directories_in_share
 
@@ -218,9 +228,10 @@ def main():
     parent_path = module.params.get("parent_path")
     state = module.params.get("state")
     account_name = module.params.get("account_name")
-    path_sub = re.sub(r"^\/*", "", path)
-    parent_path_sub = re.sub(r"^\/*", "", parent_path)
-
+    path_sub = re.sub(r"^\/", "", path)
+    path_sub = re.sub(r"\/$", "", path_sub)
+    parent_path_sub = re.sub(r"^\/", "", parent_path)
+    parent_path_sub = re.sub(r"\/$", "", parent_path_sub)
 
     if not parent_path_sub:
         success, msg_ret, output = create_directory(connection_string, share, path_sub, state)

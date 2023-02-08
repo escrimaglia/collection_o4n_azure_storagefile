@@ -58,11 +58,44 @@ tasks:
     register: output
 '''
 
-#from azure.storage.fileshare import ShareClient
-#import azure.core.exceptions as aze
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            {
+                "file_id": "9799948237879115776",
+                "is_directory": false,
+                "name": "o4n_azure_delete_files.py",
+                "size": 12240
+            },
+            {
+                "file_id": "16141016513216774144",
+                "is_directory": false,
+                "name": "o4n_azure_download_files.py",
+                "size": 13353
+            },
+            {
+                "file_id": "12682251999396233216",
+                "is_directory": false,
+                "name": "o4n_azure_manage_directory.py",
+                "size": 9937
+            },
+            {
+                "file_id": "10376408990182539264",
+                "is_directory": false,
+                "name": "o4n_azure_manage_shares.py",
+                "size": 4359
+            }
+        ],
+        "failed": false,
+        "msg": "List of Files created for Directory </dir1> in share <share-to-test2>"
+    }
+}
+"""
+
 from ansible.module_utils.basic import AnsibleModule
 import re
-#from azure.storage.fileshare import ShareServiceClient
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_files import list_files_in_share
 
 
@@ -80,7 +113,8 @@ def main():
   connection_string = module.params.get("connection_string")
   account_name = module.params.get("account_name")
   path = module.params.get("path")
-  path_sub = re.sub(r"^\/*", "", path)
+  path_sub = re.sub(r"^\/", "", path)
+  path_sub = re.sub(r"\/$", "", path_sub)
 
   success, msg_ret, output = list_files_in_share(account_name, connection_string, share, path_sub)
 

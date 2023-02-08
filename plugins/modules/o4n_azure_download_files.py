@@ -105,11 +105,26 @@ tasks:
     register: output
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "o4n_azure_delete_files.py",
+            "o4n_azure_download_files.py",
+            "o4n_azure_manage_directory.py",
+            "o4n_azure_manage_shares.py",
+            "o4n_azure_upload_files.py"
+        ],
+        "failed": false,
+        "msg": "Files downloaded to Directory </./download_files> from share <share-to-test2>"
+    }
+}
+"""
+
 from azure.storage.fileshare import ShareClient
 import re
 from ansible.module_utils.basic import AnsibleModule
-#from azure.storage.fileshare import ShareServiceClient
-#import azure.core.exceptions as aze
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_files import list_files_in_share
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
@@ -119,7 +134,8 @@ from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_u
 def download_files(_account_name, _connection_string, _share, _source_path, _files, _local_path):
     found_files=[]
     # casting some vars
-    _source_path=re.sub(r"^\/*", "", _source_path)
+    _source_path=re.sub(r"^\/", "", _source_path)
+    _source_path=re.sub(r"\/$", "", _source_path)
     # check if share and path exist in Account Storage
     try:
         status, msg_ret, output=list_shares_in_service(_account_name, _connection_string)
@@ -151,7 +167,7 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
                         stream = file.download_file()
                         data.write(stream.readall())
                 status=True
-                msg_ret = f"Files downloaded to Directory </{_local_path}> from share <{_share}>"
+                msg_ret = f"Files downloaded to Directory <{_local_path}> from share <{_share}>"
             elif len(found_files) == 1:
                 file=share.get_file_client(s_path + found_files[0])
                 # Download the file
@@ -159,15 +175,15 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
                     stream = file.download_file()
                     data.write(stream.readall())
                 status = True
-                msg_ret = f"File downloaded to Directory </{_local_path}> from share <{_share}>. File pattern <{_files}>"
+                msg_ret = f"File downloaded to Directory <{_local_path}> from share <{_share}>. File pattern <{_files}>"
             else:
                 status = False
-                msg_ret = f"Files not downloaded to Directory </{_local_path}> from share <{_share}>. No file to download, File pattern <{_files}>"
+                msg_ret = f"Files not downloaded to Directory <{_local_path}> from share <{_share}>. No file to download, File pattern <{_files}>"
         else:
-            msg_ret = f"Invalid Directory: </{_source_path}> in File Share <{_share}>"
+            msg_ret = f"Invalid Directory: <{_source_path}> in File Share <{_share}>"
             status = False
     except Exception as error:
-        msg_ret = f"Files not downloaded to Directory </{_local_path}>. File pattern <{_files}>. Error: <{error}>"
+        msg_ret = f"Files not downloaded to Directory <{_local_path}>. File pattern <{_files}>. Error: <{error}>"
         status = False
 
     return status, msg_ret, found_files

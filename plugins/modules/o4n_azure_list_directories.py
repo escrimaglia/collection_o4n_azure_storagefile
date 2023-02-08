@@ -65,11 +65,30 @@ tasks:
     register: output
 '''
 
-#from azure.storage.fileshare import ShareClient
-#import azure.core.exceptions as aze
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            {
+                "file_id": "13835104234770530304",
+                "is_directory": true,
+                "name": "dir1"
+            },
+            {
+                "file_id": "13835121826956574720",
+                "is_directory": true,
+                "name": "Dir2"
+            }
+        ],
+        "failed": false,
+        "msg": "List of Directories created for Directory </> in share <share-to-test2>"
+    }
+}
+"""
+
 from ansible.module_utils.basic import AnsibleModule
 import re
-#from azure.storage.fileshare import ShareServiceClient
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_directories import list_directories_in_share
 
@@ -88,7 +107,8 @@ def main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
     path = module.params.get("path")
-    path_sub = re.sub(r"^\/*", "", path)
+    path_sub = re.sub(r"^\/", "", path)
+    path_sub = re.sub(r"\/$", "", path_sub)
 
     success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, path_sub)
 
