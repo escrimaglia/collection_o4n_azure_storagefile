@@ -119,13 +119,13 @@ tasks:
       account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
-      path: "{{ item.dir }}"
-      parent_path: "{{ item.subdir }}"
+      path: "{{ item.path }}"
+      parent_path: "{{ item.parent }}"
     register: output
     loop:
-      - {"subdir": "", "dir": "/Dir1" }
-      - {"subdir": "/Dir1", "dir": "/Dir2"}
-      - {"subdir": "/Dir1/Dir2", "dir": "/Dir3"}
+      - {"parent": "", "path": "/Dir1" }
+      - {"parent": "/Dir1", "path": "/Dir2"}
+      - {"parent": "/Dir1/Dir2", "path": "/Dir3"}
 
   - name: Delete Sub Directory
     o4n_azure_manage_directory:
@@ -165,15 +165,12 @@ def create_directory(_connection_string, _share, _directory, _state):
     except aze.ResourceExistsError:
         status = False
         msg_ret = f"Directory <{_directory}> not <{action}>. The Directory already exist>"
-        return status, msg_ret, _directory
     except aze.ResourceNotFoundError:
         status = False
         msg_ret = f"Directory <{_directory}> not <{action}> in share <{_share}>. The Directory does not exist>"
-        return status, msg_ret, _directory
     except Exception as error:
         msg_ret = f"Error managing Directory <{_directory}> in share <{_share}>. Error: <{error}>"
         status = False
-        return status, msg_ret, _directory
 
     return status, msg_ret, _directory
 
@@ -193,70 +190,25 @@ def create_subdirectory(_connection_string, _share, _directory, _parent_director
     except aze.ResourceExistsError as error:
         status = False
         msg_ret = f"Sub Directory <{_directory}> not <{action}> in Parent Directory <{_parent_directory}>. The Directory already exist>"
-        return status, msg_ret, "/" + _parent_directory + "/"+ _directory
     except aze.ResourceNotFoundError:
         status = False
         msg_ret = f"Sub Directory <{_directory}> not <{action}>. Resource <{_parent_directory}> and/or <{_directory}>in share <{_share}> do not exist>"
-        return status, msg_ret, "/" + _parent_directory + "/"+ _directory  
     except Exception as error:
         msg_ret = f"Error managing Sub Directory <{_directory}> in Parent Directory <{_parent_directory}>, share <{_share}>. Error: <{error}>"
         status = False
-        return status, msg_ret, "/" + _parent_directory + "/"+ _directory
 
     return status, msg_ret, "/" + _parent_directory + "/"+ _directory
 
-# def list_directories_in_share(_account_name, _connection_string, _share, _dir):
-#     output = []
-#     status, msg_ret, shares_in_service = list_shares_in_service(_account_name, _connection_string)
-#     if status:
-#         share_exist = [share_name for share_name in shares_in_service if share_name == _share]
-#     if len(share_exist) == 1:
-#         share = ShareClient.from_connection_string(_connection_string, _share)
-#         try:
-#             # List directories in share
-#             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
-#             status = True
-#             msg_ret = f"List of Directories created for Directory </{_dir}> in share <{_share}>"
-#             output = [{"name": file['name'],"file_id": file['file_id'],"is_directory": file['is_directory']} for file in my_files['results'] if file['is_directory']]
-#         except aze.ResourceNotFoundError:
-#             msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Directory not found"
-#             status = False
-#         except Exception as error:
-#             status = False
-#             msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: <{error}>"
-#     else:
-#         msg_ret = f"List of Directories not created for Directory </{_dir}> in share <{_share}>. Error: Share not found"
-#         status = False
-
-#     return status, msg_ret, output
-
-
-# def list_shares_in_service(_account_name, _connection_string):
-#     output = []
-#     try:
-#         # Instantiate the ShareServiceClient from a connection string
-#         file_service = ShareServiceClient.from_connection_string(_connection_string)
-#         # List the shares in the file service
-#         my_shares = list(file_service.list_shares())
-#         output = [share['name'] for share in my_shares if share]
-#         status = True
-#         msg_ret = f"List of Shares created in account <{_account_name}>"
-#     except Exception as error:
-#         status = False
-#         msg_ret = f"List of Shares not created in account <{_account_name}>. Error: <{error}>"
-
-#     return status, msg_ret, output
-
 
 def main():
-    module = AnsibleModule(
+    module=AnsibleModule(
         argument_spec=dict(
-            share = dict(required = True, type = 'str'),
-            connection_string = dict(required = True, type='str'),
-            account_name=dict(required=True, type='str'),
-            path = dict(required = False, type = 'str', default = ''),
-            parent_path = dict(required = False, type = 'str', default = ''),
-            state = dict(required = False, type = 'str', choices = ["present", "absent"], default = 'present'),
+            share = dict(required=True, type='str'),
+            connection_string = dict(required=True, type='str'),
+            account_name = dict(required=True, type='str'),
+            path = dict(required=False, type='str', default=''),
+            parent_path = dict(required=False, type='str', default=''),
+            state = dict(required=False, type='str', choices=["present", "absent"], default='present'),
         )
     )
 
@@ -274,19 +226,6 @@ def main():
         success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
     else:
         success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
-
-    # if parent_path_sub and parent_path:
-    #     success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, parent_path_sub)
-    #     if not success and str(state).lower() == "present":
-    #       success, msg_ret, output = create_directory(connection_string, share, parent_path_sub, state)
-    #       if success:
-    #           success, msg_ret, output = create_subdirectory(connection_string, share, path_sub, parent_path_sub, state)
-    # elif not parent_path_sub and parent_path:
-    #     success, msg_ret, output = create_directory(connection_string, share, path_sub, state)
-    # else:
-    #   success = False
-    #   msg_ret = f"Invalid sub Directory <{path}>, Directory <{parent_path}> in share <{share}>"
-    #   output= []
 
     if success:
         module.exit_json(failed=False, msg=msg_ret, content=output)
