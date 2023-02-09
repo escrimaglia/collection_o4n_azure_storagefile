@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_list_files
 short_description: List Files in a File Share
@@ -45,9 +45,9 @@ options:
       path, directory, whose files must be listed
     required: false
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Delete files
     o4n_azure_list_files:
@@ -56,7 +56,7 @@ tasks:
       share: "{{ share }}"
       path = /dir1/dir2
     register: output
-'''
+"""
 
 RETURN = """
 ok: [localhost] => {

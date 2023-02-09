@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_list_directories
 short_description: List Directories in a File Share
@@ -45,9 +45,9 @@ options:
       path, directory, whose directories must be listed. If not present, path is the root of the File Share
     required: false
     type: string
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = """
 tasks:
   - name: Delete files
     o4n_azure_list_directories:
@@ -63,7 +63,7 @@ tasks:
       connection_string: "{{ connection_string }}"
       share: "{{ share }}"
     register: output
-'''
+"""
 
 RETURN = """
 ok: [localhost] => {
