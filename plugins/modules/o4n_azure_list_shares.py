@@ -5,10 +5,6 @@ from __future__ import print_function, unicode_literals
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'octupus',
-                    'metadata_version': '1.1'}
-
 DOCUMENTATION = """
 ---
 module: o4n_azure_list_shares
