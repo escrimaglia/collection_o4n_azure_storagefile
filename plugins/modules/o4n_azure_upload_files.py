@@ -168,13 +168,13 @@ def upload_files(_account_name, _share, _connection_string, _source_path, _sourc
 
 def main():
   module = AnsibleModule(
-      argument_spec = dict(
+      argument_spec=dict(
           account_name=dict(required=True, type='str'),
-          share = dict(required = True, type = 'str'),
-          connection_string = dict(required = True, type='str'),
-          source_path = dict(required = False, type = 'str', default = ''),
-          files = dict(required = True, type = 'str'),
-          dest_path = dict(required = False, type = 'str', default = '')
+          share=dict(required=True, type='str'),
+          connection_string=dict(required=True, type='str'),
+          source_path=dict(required=False, type='str', default=''),
+          files=dict(required=True, type='str'),
+          dest_path=dict(required=False, type='str', default='')
       )
   )
 
