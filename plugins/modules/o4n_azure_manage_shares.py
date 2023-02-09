@@ -52,15 +52,13 @@ options:
 """
 
 RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": {
-            "share": "share-to-test"
-        },
-        "failed": false,
-        "msg": "File Share <share-to-test> <created> in account <octionstorage>"
-    }
+"output": {
+    "changed": false,
+    "content": {
+        "share": "share-to-test"
+    },
+    "failed": false,
+    "msg": "File Share <share-to-test> <created> in account <octionstorage>"
 }
 """
 

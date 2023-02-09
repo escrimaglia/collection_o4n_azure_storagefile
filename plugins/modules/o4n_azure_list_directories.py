@@ -48,24 +48,22 @@ options:
 """
 
 RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": [
-            {
-                "file_id": "13835104234770530304",
-                "is_directory": true,
-                "name": "dir1"
-            },
-            {
-                "file_id": "13835121826956574720",
-                "is_directory": true,
-                "name": "Dir2"
-            }
-        ],
-        "failed": false,
-        "msg": "List of Directories created for Directory </> in share <share-to-test2>"
-    }
+"output": {
+    "changed": false,
+    "content": [
+        {
+            "file_id": "13835104234770530304",
+            "is_directory": true,
+            "name": "dir1"
+        },
+        {
+            "file_id": "13835121826956574720",
+            "is_directory": true,
+            "name": "Dir2"
+        }
+    ],
+    "failed": false,
+    "msg": "List of Directories created for Directory </> in share <share-to-test2>"
 }
 """
 

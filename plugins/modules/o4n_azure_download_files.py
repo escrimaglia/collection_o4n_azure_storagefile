@@ -67,19 +67,17 @@ options:
 """
 
 RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": [
-            "o4n_azure_delete_files.py",
-            "o4n_azure_download_files.py",
-            "o4n_azure_manage_directory.py",
-            "o4n_azure_manage_shares.py",
-            "o4n_azure_upload_files.py"
-        ],
-        "failed": false,
-        "msg": "Files downloaded to Directory </./download_files> from share <share-to-test2>"
-    }
+"output": {
+    "changed": false,
+    "content": [
+        "o4n_azure_delete_files.py",
+        "o4n_azure_download_files.py",
+        "o4n_azure_manage_directory.py",
+        "o4n_azure_manage_shares.py",
+        "o4n_azure_upload_files.py"
+    ],
+    "failed": false,
+    "msg": "Files downloaded to Directory </./download_files> from share <share-to-test2>"
 }
 """
 

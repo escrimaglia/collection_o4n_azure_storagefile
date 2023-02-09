@@ -64,13 +64,11 @@ options:
 """
 
 RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": "/dir1/dir3",
-        "failed": false,
-        "msg": "Sub Directory <dir3> <created> under Directory <dir1> in share <share-to-test2>"
-    }
+"output": {
+    "changed": false,
+    "content": "/dir1/dir3",
+    "failed": false,
+    "msg": "Sub Directory <dir3> <created> under Directory <dir1> in share <share-to-test2>"
 }
 """
 

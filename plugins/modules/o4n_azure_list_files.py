@@ -47,6 +47,52 @@ options:
     type: string
 """
 
+RETURN = """
+"output": {
+    "changed": false,
+    "content": [
+        {
+            "file_id": "9799948237879115776",
+            "is_directory": false,
+            "name": "o4n_azure_delete_files.py",
+            "size": 12240
+        },
+        {
+            "file_id": "16141016513216774144",
+            "is_directory": false,
+            "name": "o4n_azure_download_files.py",
+            "size": 13353
+        },
+        {
+            "file_id": "12682251999396233216",
+            "is_directory": false,
+            "name": "o4n_azure_manage_directory.py",
+            "size": 9937
+        },
+        {
+            "file_id": "10376408990182539264",
+            "is_directory": false,
+            "name": "o4n_azure_manage_shares.py",
+            "size": 4359
+        },
+        {
+            "file_id": "17293938017823621120",
+            "is_directory": false,
+            "name": "o4n_azure_upload_files.py",
+            "size": 10611
+        },
+        {
+            "file_id": "14988095008609927168",
+            "is_directory": false,
+            "name": "__init__.py",
+            "size": 0
+        }
+    ],
+    "failed": false,
+    "msg": "List of Files created for Directory </dir1> in share <share-to-test2>"
+}
+"""
+
 EXAMPLES = """
 tasks:
   - name: Delete files

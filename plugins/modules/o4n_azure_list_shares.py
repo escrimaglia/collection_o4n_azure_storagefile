@@ -38,18 +38,16 @@ options:
 """
 
 RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": [
-            "automation-filesharing",
-            "share-bp-cu3",
-            "share-to-test",
-            "share-to-test2"
-        ],
-        "failed": false,
-        "msg": "List of Shares created in account <octionstorage>"
-    }
+"output": {
+    "changed": false,
+    "content": [
+        "automation-filesharing",
+        "share-bp-cu3",
+        "share-to-test",
+        "share-to-test2"
+    ],
+    "failed": false,
+    "msg": "List of Shares created in account <octionstorage>"
 }
 """
 
