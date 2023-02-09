@@ -9,7 +9,7 @@ ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'octupus',
                     'metadata_version': '1.1'}
 
-DOCUMENTATION = r'''
+DOCUMENTATION = """
 ---
 module: o4n_azure_manage_directory
 short_description: Create and Delete Directories and Sub Directory in a share Storage File
@@ -61,7 +61,18 @@ options:
       parent path, directory, where directory must be created or deleted
     required: false
     type: string
-'''
+"""
+
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": "/dir1/dir3",
+        "failed": false,
+        "msg": "Sub Directory <dir3> <created> under Directory <dir1> in share <share-to-test2>"
+    }
+}
+"""
 
 EXAMPLES = """
 tasks:
@@ -138,16 +149,6 @@ tasks:
     register: output
 """
 
-RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": "/dir1/dir3",
-        "failed": false,
-        "msg": "Sub Directory <dir3> <created> under Directory <dir1> in share <share-to-test2>"
-    }
-}
-"""
 
 from azure.storage.fileshare import ShareClient
 import azure.core.exceptions as aze

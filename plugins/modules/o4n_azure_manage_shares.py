@@ -51,6 +51,19 @@ options:
     type: string
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": {
+            "share": "share-to-test"
+        },
+        "failed": false,
+        "msg": "File Share <share-to-test> <created> in account <octionstorage>"
+    }
+}
+"""
+
 EXAMPLES = """
 tasks:
   - name: Create a share
@@ -69,18 +82,6 @@ tasks:
     register: output
 """
 
-RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": {
-            "share": "share-to-test"
-        },
-        "failed": false,
-        "msg": "File Share <share-to-test> <created> in account <octionstorage>"
-    }
-}
-"""
 
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule

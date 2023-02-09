@@ -60,6 +60,27 @@ options:
     type: string
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "o4n_azure_list_files.py",
+            "o4n_azure_list_shares.py",
+            "o4n_azure_download_files.py",
+            "o4n_azure_manage_shares.py",
+            "__init__.py",
+            "o4n_azure_manage_directory.py",
+            "o4n_azure_upload_files.py",
+            "o4n_azure_delete_files.py",
+            "o4n_azure_list_directories.py"
+        ],
+        "failed": false,
+        "msg": "Files uploaded to Directory </dir1> in share <share-to-test2>"
+    }
+}
+"""
+
 EXAMPLES = """
 tasks:
   - name: Upload files
@@ -99,26 +120,6 @@ tasks:
       register: output
 """
 
-RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": [
-            "o4n_azure_list_files.py",
-            "o4n_azure_list_shares.py",
-            "o4n_azure_download_files.py",
-            "o4n_azure_manage_shares.py",
-            "__init__.py",
-            "o4n_azure_manage_directory.py",
-            "o4n_azure_upload_files.py",
-            "o4n_azure_delete_files.py",
-            "o4n_azure_list_directories.py"
-        ],
-        "failed": false,
-        "msg": "Files uploaded to Directory </dir1> in share <share-to-test2>"
-    }
-}
-"""
 
 import os
 from azure.storage.fileshare import ShareClient

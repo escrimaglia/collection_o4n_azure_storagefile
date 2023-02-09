@@ -66,6 +66,23 @@ options:
     type: string
 """
 
+RETURN = """
+ok: [localhost] => {
+    "output": {
+        "changed": false,
+        "content": [
+            "o4n_azure_delete_files.py",
+            "o4n_azure_download_files.py",
+            "o4n_azure_manage_directory.py",
+            "o4n_azure_manage_shares.py",
+            "o4n_azure_upload_files.py"
+        ],
+        "failed": false,
+        "msg": "Files downloaded to Directory </./download_files> from share <share-to-test2>"
+    }
+}
+"""
+
 EXAMPLES = """
 tasks:
   - name: Download files
@@ -103,23 +120,6 @@ tasks:
       connection_string: "{{ connection_string }}"
       files: file*.t*
     register: output
-"""
-
-RETURN = """
-ok: [localhost] => {
-    "output": {
-        "changed": false,
-        "content": [
-            "o4n_azure_delete_files.py",
-            "o4n_azure_download_files.py",
-            "o4n_azure_manage_directory.py",
-            "o4n_azure_manage_shares.py",
-            "o4n_azure_upload_files.py"
-        ],
-        "failed": false,
-        "msg": "Files downloaded to Directory </./download_files> from share <share-to-test2>"
-    }
-}
 """
 
 from azure.storage.fileshare import ShareClient
