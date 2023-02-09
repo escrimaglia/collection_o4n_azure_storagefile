@@ -19,15 +19,18 @@ def list_files_in_share(_account_name, _connection_string, _share, _dir):
             # List files in the directory
             my_files = {"results": list(share.list_directories_and_files(directory_name=_dir))}
             status = True
-            msg_ret = f"List of Files created for Directory <{_dir}> in share <{_share}>"
             output = [{"name": file['name'], "size": file['size'], "file_id": file['file_id'],
                         "is_directory": file['is_directory']} for file in my_files['results'] if
                         not file['is_directory']]
+            if len(output) == 0:
+                msg_ret = f"No Files found for path <{_dir}> in share <{_share}>"
+            else:
+                msg_ret = f"List of Files created for path <{_dir}> in share <{_share}>"
         except aze.ResourceNotFoundError:
-            msg_ret = f"No files to list in Directory <{_dir}> in share <{_share}> ,Directory not found"
+            msg_ret = f"No files to list for path <{_dir}> in share <{_share}> ,path not found"
             status = False
         except Exception as error:
             status = False
-            msg_ret = f"List of Files not created for Directory <{_dir}> in share <{_share}>. Error: <{error}>"
+            msg_ret = f"List of Files not created for path <{_dir}> in share <{_share}>. Error: <{error}>"
 
     return status, msg_ret, output

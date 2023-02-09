@@ -163,7 +163,7 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
                         stream = file.download_file()
                         data.write(stream.readall())
                 status=True
-                msg_ret = f"Files downloaded to Directory <{_local_path}> from share <{_share}>"
+                msg_ret = f"Files downloaded to Directory <{_local_path}> from path <{_source_path}> in share <{_share}>"
             elif len(found_files) == 1:
                 file=share.get_file_client(s_path + found_files[0])
                 # Download the file
@@ -171,10 +171,10 @@ def download_files(_account_name, _connection_string, _share, _source_path, _fil
                     stream = file.download_file()
                     data.write(stream.readall())
                 status = True
-                msg_ret = f"File downloaded to Directory <{_local_path}> from share <{_share}>. File pattern <{_files}>"
+                msg_ret = f"File downloaded to Directory <{_local_path}> from path <{_source_path}> in share <{_share}>. File pattern <{_files}>"
             else:
                 status = False
-                msg_ret = f"Files not downloaded to Directory <{_local_path}> from share <{_share}>. No file to download, File pattern <{_files}>"
+                msg_ret = f"Files not downloaded to Directory <{_local_path}> from path <{_source_path}> in share <{_share}>. No file to download, File pattern <{_files}>"
         else:
             msg_ret = f"Invalid Directory: <{_source_path}> in File Share <{_share}>"
             status = False
