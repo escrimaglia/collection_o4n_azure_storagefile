@@ -122,7 +122,6 @@ tasks:
 import os
 from azure.storage.fileshare import ShareClient
 from ansible.module_utils.basic import AnsibleModule
-import re
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_get_right_path import right_path
