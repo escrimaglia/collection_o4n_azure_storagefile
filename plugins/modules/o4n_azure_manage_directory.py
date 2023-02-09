@@ -72,7 +72,6 @@ EXAMPLES = """
 tasks:
   - name: Create Directory
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: /dir1
@@ -80,7 +79,6 @@ tasks:
 
   - name: Create list of Directories
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: "{{ item }}"
@@ -91,7 +89,6 @@ tasks:
 
   - name: Delete Directory
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: /dir1
@@ -100,7 +97,6 @@ tasks:
 
   - name: Create Sub Directory
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: /dir2
@@ -109,7 +105,6 @@ tasks:
 
   - name: Create a list of Sub Directories in Directory Dir1
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: "{{ item }}"
@@ -121,7 +116,6 @@ tasks:
 
   - name: Create a list of nested Sub Directories 
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: "{{ item.path }}"
@@ -134,7 +128,6 @@ tasks:
 
   - name: Delete Sub Directory
     o4n_azure_manage_directory:
-      account_name: "{{ account_name }}"
       share: share-to-test
       connection_string: "{{ connection_string }}"
       path: /dir2
@@ -210,7 +203,6 @@ def main():
         argument_spec=dict(
             share = dict(required=True, type='str'),
             connection_string = dict(required=True, type='str'),
-            #account_name = dict(required=True, type='str'),
             path = dict(required=False, type='str', default=''),
             parent_path = dict(required=False, type='str', default=''),
             state = dict(required=False, type='str', choices=["present", "absent"], default='present'),
@@ -222,7 +214,6 @@ def main():
     path = module.params.get("path")
     parent_path = module.params.get("parent_path")
     state = module.params.get("state")
-    #account_name = module.params.get("account_name")
     path_sub = right_path(path)
     parent_path_sub = right_path(parent_path)
 
