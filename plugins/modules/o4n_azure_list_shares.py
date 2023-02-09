@@ -34,17 +34,22 @@ options:
 """
 
 RETURN = """
-"output": {
-    "changed": false,
-    "content": [
-        "automation-filesharing",
-        "share-bp-cu3",
-        "share-to-test",
-        "share-to-test2"
-    ],
-    "failed": false,
-    "msg": "List of Shares created in account <octionstorage>"
-}
+output:
+  description: List of shares
+  type: dict
+  returned: allways
+  sample: 
+    output: {
+      "changed": false,
+      "content": [
+          "automation-filesharing",
+          "share-bp-cu3",
+          "share-to-test",
+          "share-to-test2"
+      ],
+      "failed": false,
+      "msg": "List of Shares created in account <octionstorage>"
+    }
 """
 
 EXAMPLES = """

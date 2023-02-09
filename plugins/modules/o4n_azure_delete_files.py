@@ -60,19 +60,19 @@ options:
 
 RETURN = """
 output:
-  description: List fo files deleted
+  description: List of files deleted
   type: dict
   returned: allways
   sample: 
     output: {
-        "changed": false,
-        "content": [
-            "o4n_azure_list_directories.py",
-            "o4n_azure_list_files.py",
-            "o4n_azure_list_shares.py"
-        ],
-        "failed": false,
-        "msg": "File deleted from Directory </dir1> in share <share-to-test2>"
+      "changed": false,
+      "content": [
+          "o4n_azure_list_directories.py",
+          "o4n_azure_list_files.py",
+          "o4n_azure_list_shares.py"
+      ],
+      "failed": false,
+      "msg": "File deleted from Directory </dir1> in share <share-to-test2>"
     }
 """
 

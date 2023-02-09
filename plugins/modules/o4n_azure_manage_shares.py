@@ -48,14 +48,19 @@ options:
 """
 
 RETURN = """
-"output": {
-    "changed": false,
-    "content": {
-        "share": "share-to-test"
-    },
-    "failed": false,
-    "msg": "File Share <share-to-test> <created> in account <octionstorage>"
-}
+output:
+  description: List of shares created or deleted
+  type: dict
+  returned: allways
+  sample: 
+    output: {
+      "changed": false,
+      "content": {
+          "share": "share-to-test"
+      },
+      "failed": false,
+      "msg": "File Share <share-to-test> <created> in account <octionstorage>"
+    }
 """
 
 EXAMPLES = """
