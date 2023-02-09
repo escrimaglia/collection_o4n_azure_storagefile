@@ -87,9 +87,9 @@ tasks:
 
 
 from ansible.module_utils.basic import AnsibleModule
-import re
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_directories import list_directories_in_share
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_get_right_path import right_path
 
 
 def main():
@@ -106,8 +106,7 @@ def main():
     connection_string = module.params.get("connection_string")
     account_name = module.params.get("account_name")
     path = module.params.get("path")
-    path_sub = re.sub(r"^\/", "", path)
-    path_sub = re.sub(r"\/$", "", path_sub)
+    path_sub = right_path(path)
 
     success, msg_ret, output = list_directories_in_share(account_name, connection_string, share, path_sub)
 

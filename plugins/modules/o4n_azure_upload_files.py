@@ -125,13 +125,12 @@ from ansible.module_utils.basic import AnsibleModule
 import re
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_list_shares import list_shares_in_service
 from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_select_files_pattern import select_files
+from ansible_collections.escrimaglia.o4n_azure_storagefile_test.plugins.module_utils.util_get_right_path import right_path
 
 
 def upload_files(_account_name, _share, _connection_string, _source_path, _source_file, _dest_path):
   found_files = []
-  # casting some vars
-  _dest_path = re.sub(r"^\/", "", _dest_path)
-  _dest_path = re.sub(r"\/$", "", _dest_path)
+  _dest_path = right_path(_dest_path)
   try:
       # get files form local file system
       base_dir = os.getcwd() + "/" + _source_path + "/"
